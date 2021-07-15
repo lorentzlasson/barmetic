@@ -85,42 +85,59 @@ update msg model =
 
 
 view : Model -> Html.Html Msg
-view model =
+view { weight } =
     let
         plates =
-            model.weight |> suggestPlates
+            weight |> suggestPlates
+
+        isIncomplete =
+            getIsIncomplete weight
     in
     Html.div []
         [ Html.input [ Html.Events.onInput identity ] []
         , Html.br [] []
-        , viewResult plates
-        , viewIsComplete model.weight plates
+        , viewResult plates isIncomplete
+        , viewCompleteness weight isIncomplete
         ]
 
 
 viewPlate : Float -> Html.Html Msg
 viewPlate =
-    String.fromFloat >> Html.text >> List.singleton >> Html.li []
+    String.fromFloat
+        >> Html.text
+        >> List.singleton
+        >> Html.li []
 
 
-viewResult : List Float -> Html.Html Msg
-viewResult plates =
-    plates
-        |> List.map viewPlate
-        |> Html.ul []
+viewResult : List Float -> Bool -> Html.Html Msg
+viewResult plates isIncomplete =
+    if isIncomplete then
+        Html.text ""
+
+    else
+        plates
+            |> List.map viewPlate
+            |> Html.ul []
 
 
-viewIsComplete : EnteredWeight -> List Plate -> Html.Html Msg
-viewIsComplete weight plates =
-    let
-        remaining =
-            plates
-                |> List.sum
-                |> (\sum -> toFloat weight - (sum * 2))
-                |> (\x -> x - weights.barbell)
-    in
-    if remaining > 0 then
-        Html.text ("Missing " ++ String.fromFloat remaining)
+viewSuggestion : String -> EnteredWeight -> Html.Html Msg
+viewSuggestion direction suggestedWeight =
+    suggestedWeight
+        |> String.fromInt
+        |> (++) ("Suggested " ++ direction ++ ": ")
+        |> Html.text
+
+
+viewCompleteness : EnteredWeight -> Bool -> Html.Html Msg
+viewCompleteness weight isComplete =
+    if isComplete then
+        Html.div []
+            [ "Impossible" |> Html.text
+            , Html.br [] []
+            , weight |> findNextCompleteWeight (\x -> x - 1) |> viewSuggestion "lower"
+            , Html.br [] []
+            , weight |> findNextCompleteWeight (\x -> x + 1) |> viewSuggestion "higher"
+            ]
 
     else
         Html.text ""
@@ -128,6 +145,29 @@ viewIsComplete weight plates =
 
 
 -- APP
+
+
+findNextCompleteWeight : (Int -> Int) -> EnteredWeight -> EnteredWeight
+findNextCompleteWeight modify weight =
+    let
+        nextWeight =
+            modify weight
+    in
+    if getIsIncomplete nextWeight then
+        findNextCompleteWeight modify nextWeight
+
+    else
+        nextWeight
+
+
+getIsIncomplete : EnteredWeight -> Bool
+getIsIncomplete weight =
+    weight
+        |> suggestPlates
+        |> List.sum
+        |> (\sum -> toFloat weight - (sum * 2))
+        |> (\x -> x - weights.barbell)
+        |> (\remaining -> remaining > 0)
 
 
 suggestPlates : EnteredWeight -> List Plate
