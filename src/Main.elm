@@ -1,8 +1,9 @@
 module Main exposing (main)
 
 import Browser
+import Element
+import Element.Input
 import Html
-import Html.Events
 
 
 
@@ -109,18 +110,30 @@ update msg model =
 
 view : Model -> Html.Html Msg
 view { entry } =
-    Html.div []
-        [ Html.input [ Html.Events.onInput identity ] []
-        , Html.br [] []
-        , viewResult entry
-        ]
+    Element.layout []
+        (Element.column [ Element.spacing 10 ]
+            [ viewInput
+            , viewResult entry
+            ]
+        )
 
 
-viewResult : Entry -> Html.Html Msg
+viewInput : Element.Element Msg
+viewInput =
+    Element.Input.text
+        []
+        { label = Element.Input.labelHidden "weight in kilograms"
+        , onChange = identity
+        , placeholder = Nothing
+        , text = "" -- not storing raw state of field
+        }
+
+
+viewResult : Entry -> Element.Element Msg
 viewResult entry =
     case entry of
         Err err ->
-            err |> Html.text
+            err |> Element.text
 
         Ok grams ->
             let
@@ -136,35 +149,32 @@ viewResult entry =
             else
                 plates
                     |> List.map viewPlate
-                    |> Html.ul []
+                    |> Element.column []
 
 
-viewPlate : Int -> Html.Html Msg
+viewPlate : Int -> Element.Element Msg
 viewPlate =
     gramsToKg
         >> String.fromFloat
-        >> Html.text
-        >> List.singleton
-        >> Html.li []
+        >> Element.text
+        >> Element.el []
 
 
-viewCompleteness : EnteredGrams -> Html.Html Msg
+viewCompleteness : EnteredGrams -> Element.Element Msg
 viewCompleteness weight =
-    Html.div []
-        [ "Impossible" |> Html.text
-        , Html.br [] []
+    Element.column []
+        [ "Impossible" |> Element.text
         , weight |> findNextCompleteWeight -500 |> viewSuggestion "lower"
-        , Html.br [] []
         , weight |> findNextCompleteWeight 500 |> viewSuggestion "higher"
         ]
 
 
-viewSuggestion : String -> EnteredGrams -> Html.Html Msg
+viewSuggestion : String -> EnteredGrams -> Element.Element Msg
 viewSuggestion direction =
     gramsToKg
         >> String.fromFloat
         >> (++) ("Suggested " ++ direction ++ ": ")
-        >> Html.text
+        >> Element.text
 
 
 
