@@ -84,7 +84,7 @@ init =
 
 type Msg
     = EditTargetWeight String
-    | EditBarbellWeightIs20 Bool
+    | EditBarbellWeightIs15Kg Bool
 
 
 update : Msg -> Model -> Model
@@ -99,7 +99,7 @@ updateInput msg model =
         EditTargetWeight targetWeight ->
             { model | targetWeight = targetWeight }
 
-        EditBarbellWeightIs20 barbellWeight ->
+        EditBarbellWeightIs15Kg barbellWeight ->
             { model | barbellWeightIs15Kg = barbellWeight }
 
 
@@ -144,7 +144,7 @@ viewInput targetWeight barbellWeight =
             }
         , Element.Input.checkbox []
             { label = Element.Input.labelHidden "check for 15 kg"
-            , onChange = EditBarbellWeightIs20
+            , onChange = EditBarbellWeightIs15Kg
             , icon = Element.Input.defaultCheckbox
             , checked = barbellWeight
             }
