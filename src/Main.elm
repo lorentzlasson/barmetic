@@ -137,7 +137,8 @@ viewResult entry =
             else
                 plates
                     |> List.map viewPlate
-                    |> Element.column []
+                    |> List.intersperse (Element.text " | ")
+                    |> Element.wrappedRow [ Element.spacing 10 ]
 
 
 viewPlate : Int -> Element.Element Msg
