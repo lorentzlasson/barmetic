@@ -23,6 +23,11 @@ main =
 -- CONST
 
 
+maxWeight : Int
+maxWeight =
+    1000000
+
+
 weights : { barbell : number, plates : List Plate }
 weights =
     { barbell = 20000
@@ -76,27 +81,65 @@ type alias Msg =
 
 parseEntry : String -> Entry
 parseEntry rawEntry =
+    rawEntry
+        |> validateNumber
+        |> Result.andThen validateHalfKg
+        |> Result.andThen validateGtBarbell
+        |> Result.andThen validateLtMax
+
+
+validateNumber : String -> Entry
+validateNumber raw =
     let
         maybeFloat =
-            rawEntry |> String.toFloat
+            raw
+                |> String.toFloat
+                |> Maybe.map kgToGrams
     in
-    case maybeFloat of
-        Nothing ->
-            "not a number" |> Err
+    Result.fromMaybe "not a number" maybeFloat
 
-        Just float ->
-            let
-                grams =
-                    float |> (*) 1000 |> round
 
-                isHalfKiloAble =
-                    grams |> modBy 500 |> (==) 0
-            in
-            if isHalfKiloAble then
-                grams |> Ok
+validateHalfKg : EnteredGrams -> Entry
+validateHalfKg grams =
+    let
+        isHalfKiloAble =
+            grams |> modBy 500 |> (==) 0
+    in
+    if isHalfKiloAble then
+        grams |> Ok
 
-            else
-                "not an even half kilo" |> Err
+    else
+        "not an even half kilo" |> Err
+
+
+validateGtBarbell : EnteredGrams -> Entry
+validateGtBarbell grams =
+    let
+        isGtBarbell =
+            grams |> (<) weights.barbell
+    in
+    if isGtBarbell then
+        grams |> Ok
+
+    else
+        "weight needs to be greater than weight of barbell" |> Err
+
+
+validateLtMax : EnteredGrams -> Entry
+validateLtMax grams =
+    let
+        isLtMax =
+            grams |> (>) maxWeight
+    in
+    if isLtMax then
+        grams |> Ok
+
+    else
+        grams
+            |> gramsToKg
+            |> String.fromFloat
+            |> (++) "max weight allowed is "
+            |> Err
 
 
 update : Msg -> Model -> Model
@@ -179,6 +222,12 @@ viewSuggestion direction =
 
 
 -- APP
+
+
+kgToGrams : Float -> Int
+kgToGrams =
+    (*) 1000
+        >> round
 
 
 gramsToKg : Int -> Float
