@@ -24,25 +24,22 @@ main =
 -- CONST
 
 
-maxWeight : Int
+maxWeight : Grams
 maxWeight =
     1000000
 
 
-weights : { barbell : number, plates : List Plate }
-weights =
-    { barbell = 20000
-    , plates =
-        [ 500
-        , 1250
-        , 2500
-        , 5000
-        , 10000
-        , 15000
-        , 20000
-        , 25000
-        ]
-    }
+constPlates : List Plate
+constPlates =
+    [ 500
+    , 1250
+    , 2500
+    , 5000
+    , 10000
+    , 15000
+    , 20000
+    , 25000
+    ]
 
 
 
@@ -50,12 +47,19 @@ weights =
 
 
 type alias Model =
-    { input : Input
+    { targetWeight : String
+    , barbellWeightIs15Kg : Bool
+    , output : Output
     }
 
 
-type alias Input =
-    Result String Grams
+type ValidOutput
+    = PlateList (List Plate)
+    | Suggestions ( Grams, Grams )
+
+
+type alias Output =
+    Result String ValidOutput
 
 
 type alias Grams =
@@ -63,12 +67,14 @@ type alias Grams =
 
 
 type alias Plate =
-    Int
+    Grams
 
 
 init : Model
 init =
-    { input = Err ""
+    { targetWeight = ""
+    , barbellWeightIs15Kg = False
+    , output = Err ""
     }
 
 
@@ -76,21 +82,34 @@ init =
 -- UPDATE
 
 
-type alias Msg =
-    String
+type Msg
+    = EditTargetWeight String
+    | EditBarbellWeightIs20 Bool
 
 
 update : Msg -> Model -> Model
 update msg model =
-    { model | input = parseEntry msg }
+    updateInput msg model
+        |> updateOutput
 
 
-parseEntry : String -> Input
-parseEntry =
-    validateNumber
-        >> Result.andThen validateHalfKgAble
-        >> Result.andThen validateGtBarbell
-        >> Result.andThen validateLtMax
+updateInput : Msg -> Model -> Model
+updateInput msg model =
+    case msg of
+        EditTargetWeight targetWeight ->
+            { model | targetWeight = targetWeight }
+
+        EditBarbellWeightIs20 barbellWeight ->
+            { model | barbellWeightIs15Kg = barbellWeight }
+
+
+updateOutput : Model -> Model
+updateOutput model =
+    let
+        barbellWeight =
+            model.barbellWeightIs15Kg |> boolToBarbellWeight
+    in
+    { model | output = calculateOutput barbellWeight model.targetWeight }
 
 
 
@@ -98,7 +117,7 @@ parseEntry =
 
 
 view : Model -> Html.Html Msg
-view { input } =
+view model =
     Element.layout
         [ Element.padding 8
         , Element.Font.size 100
@@ -107,48 +126,54 @@ view { input } =
             [ Element.spacing 30
             , Element.width Element.fill
             ]
-            [ viewInput
-            , viewResult input
+            [ viewInput model.targetWeight model.barbellWeightIs15Kg
+            , viewOutput model.output
             ]
         )
 
 
-viewInput : Element.Element Msg
-viewInput =
-    Element.Input.text
-        []
-        { label = Element.Input.labelHidden "weight in kilograms"
-        , onChange = identity
-        , placeholder = Nothing
-        , text = "" -- not storing raw state of field
-        }
+viewInput : String -> Bool -> Element.Element Msg
+viewInput targetWeight barbellWeight =
+    Element.wrappedRow [ Element.spacing 20 ]
+        [ Element.Input.text
+            []
+            { label = Element.Input.labelHidden "weight in kilograms"
+            , onChange = EditTargetWeight
+            , placeholder = Nothing
+            , text = targetWeight
+            }
+        , Element.Input.checkbox []
+            { label = Element.Input.labelHidden "check for 15 kg"
+            , onChange = EditBarbellWeightIs20
+            , icon = Element.Input.defaultCheckbox
+            , checked = barbellWeight
+            }
+        ]
 
 
-viewResult : Input -> Element.Element Msg
-viewResult entry =
-    case entry of
+viewOutput : Output -> Element.Element Msg
+viewOutput output =
+    case output of
+        Ok validOutput ->
+            case validOutput of
+                PlateList plates ->
+                    plates |> viewPlates
+
+                Suggestions suggestions ->
+                    suggestions |> viewSuggestions
+
         Err err ->
             err |> viewWrappedText
 
-        Ok grams ->
-            let
-                plates =
-                    grams |> suggestPlates
 
-                isIncomplete =
-                    getIsIncomplete grams
-            in
-            if isIncomplete then
-                viewCompleteness grams
-
-            else
-                plates
-                    |> List.map viewPlate
-                    |> List.intersperse (Element.text " | ")
-                    |> Element.wrappedRow [ Element.spacing 10 ]
+viewPlates : List Plate -> Element.Element Msg
+viewPlates =
+    List.map viewPlate
+        >> List.intersperse (Element.text " | ")
+        >> Element.wrappedRow [ Element.spacing 10 ]
 
 
-viewPlate : Int -> Element.Element Msg
+viewPlate : Grams -> Element.Element Msg
 viewPlate =
     gramsToKgs
         >> String.fromFloat
@@ -156,20 +181,19 @@ viewPlate =
         >> Element.el []
 
 
-viewCompleteness : Grams -> Element.Element Msg
-viewCompleteness weight =
+viewSuggestions : ( Grams, Grams ) -> Element.Element Msg
+viewSuggestions ( lower, higher ) =
     Element.column []
         [ "🙅" |> Element.text
         , "Suggestions" |> Element.text
-        , weight |> viewSuggestion "Lower: " -500
-        , weight |> viewSuggestion "Higher: " 500
+        , lower |> viewSuggestion "Lower: "
+        , higher |> viewSuggestion "Higher: "
         ]
 
 
-viewSuggestion : String -> Int -> Grams -> Element.Element Msg
-viewSuggestion label step =
-    findNextCompleteWeight step
-        >> gramsToKgs
+viewSuggestion : String -> Grams -> Element.Element Msg
+viewSuggestion label =
+    gramsToKgs
         >> String.fromFloat
         >> (++) label
         >> viewWrappedText
@@ -186,7 +210,16 @@ viewWrappedText =
 -- APP
 
 
-validateNumber : String -> Input
+calculateOutput : Grams -> String -> Output
+calculateOutput barbellWeight =
+    validateNumber
+        >> Result.andThen validateHalfKgAble
+        >> Result.andThen (validateGtBarbell barbellWeight)
+        >> Result.andThen validateLtMax
+        >> Result.map (calculateValidOutput barbellWeight)
+
+
+validateNumber : String -> Result String Grams
 validateNumber raw =
     let
         maybeFloat =
@@ -197,95 +230,120 @@ validateNumber raw =
     Result.fromMaybe "not a number" maybeFloat
 
 
-validateHalfKgAble : Grams -> Input
-validateHalfKgAble grams =
+validateHalfKgAble : Grams -> Result String Grams
+validateHalfKgAble weight =
     let
         isHalfKiloAble =
-            grams |> modBy 500 |> (==) 0
+            weight |> modBy 500 |> (==) 0
     in
     if isHalfKiloAble then
-        grams |> Ok
+        weight |> Ok
 
     else
         "not an even half kilo" |> Err
 
 
-validateGtBarbell : Grams -> Input
-validateGtBarbell grams =
+validateGtBarbell : Grams -> Grams -> Result String Grams
+validateGtBarbell barbellWeight weight =
     let
         isGtBarbell =
-            grams |> (<) weights.barbell
+            weight |> (<) barbellWeight
     in
     if isGtBarbell then
-        grams |> Ok
+        weight |> Ok
 
     else
         "weight needs to be greater than weight of barbell" |> Err
 
 
-validateLtMax : Grams -> Input
-validateLtMax grams =
+validateLtMax : Grams -> Result String Grams
+validateLtMax weight =
     let
         isLtMax =
-            grams |> (>) maxWeight
+            weight |> (>) maxWeight
     in
     if isLtMax then
-        grams |> Ok
+        weight |> Ok
 
     else
-        grams
+        weight
             |> gramsToKgs
             |> String.fromFloat
             |> (++) "max weight allowed is "
             |> Err
 
 
-kgsToGrams : Float -> Int
+calculateValidOutput : Grams -> Grams -> ValidOutput
+calculateValidOutput barbellWeight weight =
+    if getIsIncomplete barbellWeight weight then
+        Suggestions (calcSuggestions barbellWeight weight)
+
+    else
+        PlateList (calcPlates barbellWeight weight)
+
+
+calcSuggestions : Grams -> Grams -> ( Grams, Grams )
+calcSuggestions barbellWeight weight =
+    Tuple.pair
+        (weight |> findNextCompleteWeight barbellWeight -500)
+        (weight |> findNextCompleteWeight barbellWeight 500)
+
+
+kgsToGrams : Float -> Grams
 kgsToGrams =
     (*) 1000
         >> round
 
 
-gramsToKgs : Int -> Float
+gramsToKgs : Grams -> Float
 gramsToKgs =
     toFloat
         >> (*) 0.001
 
 
-findNextCompleteWeight : Int -> Grams -> Grams
-findNextCompleteWeight step weight =
+boolToBarbellWeight : Bool -> Grams
+boolToBarbellWeight bool =
+    if bool then
+        15000
+
+    else
+        20000
+
+
+findNextCompleteWeight : Grams -> Grams -> Grams -> Grams
+findNextCompleteWeight barbellWeight step weight =
     let
         nextWeight =
             weight + step
     in
-    if getIsIncomplete nextWeight then
-        findNextCompleteWeight step nextWeight
+    if getIsIncomplete barbellWeight nextWeight then
+        findNextCompleteWeight barbellWeight step nextWeight
 
     else
         nextWeight
 
 
-getIsIncomplete : Grams -> Bool
-getIsIncomplete weight =
+getIsIncomplete : Grams -> Grams -> Bool
+getIsIncomplete barbellWeight weight =
     weight
-        |> suggestPlates
+        |> calcPlates barbellWeight
         |> List.sum
         |> (\sum -> weight - (sum * 2))
-        |> (\x -> x - weights.barbell)
+        |> (\x -> x - barbellWeight)
         |> (\remaining -> remaining > 0)
 
 
-suggestPlates : Grams -> List Plate
-suggestPlates weight =
+calcPlates : Grams -> Grams -> List Plate
+calcPlates barbellWeight weight =
     let
         plateWeightPerSide =
-            toFloat (weight - weights.barbell) / 2 |> round
+            toFloat (weight - barbellWeight) / 2 |> round
     in
-    suggestPlatesPerSide plateWeightPerSide []
+    calcPlatesPerSide plateWeightPerSide []
 
 
-suggestPlatesPerSide : Int -> List Plate -> List Plate
-suggestPlatesPerSide remaining plates =
+calcPlatesPerSide : Grams -> List Plate -> List Plate
+calcPlatesPerSide remaining plates =
     if remaining <= 0 then
         plates
 
@@ -299,11 +357,11 @@ suggestPlatesPerSide remaining plates =
                 plates
 
             Just nextPlate ->
-                suggestPlatesPerSide (remaining - nextPlate) (plates ++ [ nextPlate ])
+                calcPlatesPerSide (remaining - nextPlate) (plates ++ [ nextPlate ])
 
 
-heaviestPlateNotExceeding : Int -> Maybe Plate
+heaviestPlateNotExceeding : Grams -> Maybe Plate
 heaviestPlateNotExceeding weight =
-    weights.plates
+    constPlates
         |> List.filter ((>=) weight)
         |> List.maximum
