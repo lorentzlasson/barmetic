@@ -24,16 +24,16 @@ main =
 
 weights : { barbell : number, plates : List Plate }
 weights =
-    { barbell = 20
+    { barbell = 20000
     , plates =
-        [ 0.5
-        , 1.25
-        , 2.5
-        , 5
-        , 10
-        , 15
-        , 20
-        , 25
+        [ 500
+        , 1250
+        , 2500
+        , 5000
+        , 10000
+        , 15000
+        , 20000
+        , 25000
         ]
     }
 
@@ -42,22 +42,26 @@ weights =
 -- MODEL
 
 
-type alias EnteredWeight =
+type alias EnteredGrams =
     Int
 
 
+type alias Entry =
+    Result String EnteredGrams
+
+
 type alias Plate =
-    Float
+    Int
 
 
 type alias Model =
-    { weight : EnteredWeight
+    { entry : Entry
     }
 
 
 init : Model
 init =
-    { weight = 0
+    { entry = Err ""
     }
 
 
@@ -69,15 +73,34 @@ type alias Msg =
     String
 
 
+parseEntry : String -> Entry
+parseEntry rawEntry =
+    let
+        maybeFloat =
+            rawEntry |> String.toFloat
+    in
+    case maybeFloat of
+        Nothing ->
+            "not a number" |> Err
+
+        Just float ->
+            let
+                grams =
+                    float |> (*) 1000 |> round
+
+                isHalfKiloAble =
+                    grams |> modBy 500 |> (==) 0
+            in
+            if isHalfKiloAble then
+                grams |> Ok
+
+            else
+                "not an even half kilo" |> Err
+
+
 update : Msg -> Model -> Model
 update msg model =
-    let
-        weight =
-            msg
-                |> String.toInt
-                |> Maybe.withDefault 0
-    in
-    { model | weight = weight }
+    { model | entry = parseEntry msg }
 
 
 
@@ -85,101 +108,108 @@ update msg model =
 
 
 view : Model -> Html.Html Msg
-view { weight } =
-    let
-        plates =
-            weight |> suggestPlates
-
-        isIncomplete =
-            getIsIncomplete weight
-    in
+view { entry } =
     Html.div []
         [ Html.input [ Html.Events.onInput identity ] []
         , Html.br [] []
-        , viewResult plates isIncomplete
-        , viewCompleteness weight isIncomplete
+        , viewResult entry
         ]
 
 
-viewPlate : Float -> Html.Html Msg
+viewResult : Entry -> Html.Html Msg
+viewResult entry =
+    case entry of
+        Err err ->
+            err |> Html.text
+
+        Ok grams ->
+            let
+                plates =
+                    grams |> suggestPlates
+
+                isIncomplete =
+                    getIsIncomplete grams
+            in
+            if isIncomplete then
+                viewCompleteness grams
+
+            else
+                plates
+                    |> List.map viewPlate
+                    |> Html.ul []
+
+
+viewPlate : Int -> Html.Html Msg
 viewPlate =
-    String.fromFloat
+    gramsToKg
+        >> String.fromFloat
         >> Html.text
         >> List.singleton
         >> Html.li []
 
 
-viewResult : List Float -> Bool -> Html.Html Msg
-viewResult plates isIncomplete =
-    if isIncomplete then
-        Html.text ""
-
-    else
-        plates
-            |> List.map viewPlate
-            |> Html.ul []
-
-
-viewSuggestion : String -> EnteredWeight -> Html.Html Msg
-viewSuggestion direction suggestedWeight =
-    suggestedWeight
-        |> String.fromInt
-        |> (++) ("Suggested " ++ direction ++ ": ")
-        |> Html.text
+viewCompleteness : EnteredGrams -> Html.Html Msg
+viewCompleteness weight =
+    Html.div []
+        [ "Impossible" |> Html.text
+        , Html.br [] []
+        , weight |> findNextCompleteWeight -500 |> viewSuggestion "lower"
+        , Html.br [] []
+        , weight |> findNextCompleteWeight 500 |> viewSuggestion "higher"
+        ]
 
 
-viewCompleteness : EnteredWeight -> Bool -> Html.Html Msg
-viewCompleteness weight isComplete =
-    if isComplete then
-        Html.div []
-            [ "Impossible" |> Html.text
-            , Html.br [] []
-            , weight |> findNextCompleteWeight (\x -> x - 1) |> viewSuggestion "lower"
-            , Html.br [] []
-            , weight |> findNextCompleteWeight (\x -> x + 1) |> viewSuggestion "higher"
-            ]
-
-    else
-        Html.text ""
+viewSuggestion : String -> EnteredGrams -> Html.Html Msg
+viewSuggestion direction =
+    gramsToKg
+        >> String.fromFloat
+        >> (++) ("Suggested " ++ direction ++ ": ")
+        >> Html.text
 
 
 
 -- APP
 
 
-findNextCompleteWeight : (Int -> Int) -> EnteredWeight -> EnteredWeight
-findNextCompleteWeight modify weight =
+gramsToKg : Int -> Float
+gramsToKg =
+    toFloat
+        >> (*) 0.001
+
+
+findNextCompleteWeight : Int -> EnteredGrams -> EnteredGrams
+findNextCompleteWeight step weight =
     let
         nextWeight =
-            modify weight
+            weight + step
     in
     if getIsIncomplete nextWeight then
-        findNextCompleteWeight modify nextWeight
+        findNextCompleteWeight step nextWeight
 
     else
         nextWeight
 
 
-getIsIncomplete : EnteredWeight -> Bool
+getIsIncomplete : EnteredGrams -> Bool
 getIsIncomplete weight =
     weight
         |> suggestPlates
         |> List.sum
-        |> (\sum -> toFloat weight - (sum * 2))
+        |> (\sum -> weight - (sum * 2))
         |> (\x -> x - weights.barbell)
         |> (\remaining -> remaining > 0)
 
 
-suggestPlates : EnteredWeight -> List Plate
+suggestPlates : EnteredGrams -> List Plate
 suggestPlates weight =
     let
         plateWeightPerSide =
-            toFloat (weight - weights.barbell) / 2
+            toFloat (weight - weights.barbell) / 2 |> round
     in
     suggestPlatesPerSide plateWeightPerSide []
 
 
-suggestPlatesPerSide : Float -> List Plate -> List Plate
+suggestPlatesPerSide : Int -> List Plate -> List Plate
 suggestPlatesPerSide remaining plates =
     if remaining <= 0 then
         plates
@@ -197,7 +227,7 @@ suggestPlatesPerSide remaining plates =
                 suggestPlatesPerSide (remaining - nextPlate) (plates ++ [ nextPlate ])
 
 
-heaviestPlateNotExceeding : Float -> Maybe Plate
+heaviestPlateNotExceeding : Int -> Maybe Plate
 heaviestPlateNotExceeding weight =
     weights.plates
         |> List.filter ((>=) weight)
