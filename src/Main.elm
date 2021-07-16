@@ -48,26 +48,26 @@ weights =
 -- MODEL
 
 
-type alias EnteredGrams =
+type alias Model =
+    { input : Input
+    }
+
+
+type alias Input =
+    Result String Grams
+
+
+type alias Grams =
     Int
-
-
-type alias Entry =
-    Result String EnteredGrams
 
 
 type alias Plate =
     Int
 
 
-type alias Model =
-    { entry : Entry
-    }
-
-
 init : Model
 init =
-    { entry = Err ""
+    { input = Err ""
     }
 
 
@@ -79,72 +79,17 @@ type alias Msg =
     String
 
 
-parseEntry : String -> Entry
-parseEntry rawEntry =
-    rawEntry
-        |> validateNumber
-        |> Result.andThen validateHalfKg
-        |> Result.andThen validateGtBarbell
-        |> Result.andThen validateLtMax
-
-
-validateNumber : String -> Entry
-validateNumber raw =
-    let
-        maybeFloat =
-            raw
-                |> String.toFloat
-                |> Maybe.map kgToGrams
-    in
-    Result.fromMaybe "not a number" maybeFloat
-
-
-validateHalfKg : EnteredGrams -> Entry
-validateHalfKg grams =
-    let
-        isHalfKiloAble =
-            grams |> modBy 500 |> (==) 0
-    in
-    if isHalfKiloAble then
-        grams |> Ok
-
-    else
-        "not an even half kilo" |> Err
-
-
-validateGtBarbell : EnteredGrams -> Entry
-validateGtBarbell grams =
-    let
-        isGtBarbell =
-            grams |> (<) weights.barbell
-    in
-    if isGtBarbell then
-        grams |> Ok
-
-    else
-        "weight needs to be greater than weight of barbell" |> Err
-
-
-validateLtMax : EnteredGrams -> Entry
-validateLtMax grams =
-    let
-        isLtMax =
-            grams |> (>) maxWeight
-    in
-    if isLtMax then
-        grams |> Ok
-
-    else
-        grams
-            |> gramsToKg
-            |> String.fromFloat
-            |> (++) "max weight allowed is "
-            |> Err
-
-
 update : Msg -> Model -> Model
 update msg model =
-    { model | entry = parseEntry msg }
+    { model | input = parseEntry msg }
+
+
+parseEntry : String -> Input
+parseEntry =
+    validateNumber
+        >> Result.andThen validateHalfKgAble
+        >> Result.andThen validateGtBarbell
+        >> Result.andThen validateLtMax
 
 
 
@@ -152,11 +97,11 @@ update msg model =
 
 
 view : Model -> Html.Html Msg
-view { entry } =
+view { input } =
     Element.layout []
         (Element.column [ Element.spacing 10 ]
             [ viewInput
-            , viewResult entry
+            , viewResult input
             ]
         )
 
@@ -172,7 +117,7 @@ viewInput =
         }
 
 
-viewResult : Entry -> Element.Element Msg
+viewResult : Input -> Element.Element Msg
 viewResult entry =
     case entry of
         Err err ->
@@ -197,13 +142,13 @@ viewResult entry =
 
 viewPlate : Int -> Element.Element Msg
 viewPlate =
-    gramsToKg
+    gramsToKgs
         >> String.fromFloat
         >> Element.text
         >> Element.el []
 
 
-viewCompleteness : EnteredGrams -> Element.Element Msg
+viewCompleteness : Grams -> Element.Element Msg
 viewCompleteness weight =
     Element.column []
         [ "Impossible" |> Element.text
@@ -212,9 +157,9 @@ viewCompleteness weight =
         ]
 
 
-viewSuggestion : String -> EnteredGrams -> Element.Element Msg
+viewSuggestion : String -> Grams -> Element.Element Msg
 viewSuggestion direction =
-    gramsToKg
+    gramsToKgs
         >> String.fromFloat
         >> (++) ("Suggested " ++ direction ++ ": ")
         >> Element.text
@@ -224,19 +169,73 @@ viewSuggestion direction =
 -- APP
 
 
-kgToGrams : Float -> Int
-kgToGrams =
+validateNumber : String -> Input
+validateNumber raw =
+    let
+        maybeFloat =
+            raw
+                |> String.toFloat
+                |> Maybe.map kgsToGrams
+    in
+    Result.fromMaybe "not a number" maybeFloat
+
+
+validateHalfKgAble : Grams -> Input
+validateHalfKgAble grams =
+    let
+        isHalfKiloAble =
+            grams |> modBy 500 |> (==) 0
+    in
+    if isHalfKiloAble then
+        grams |> Ok
+
+    else
+        "not an even half kilo" |> Err
+
+
+validateGtBarbell : Grams -> Input
+validateGtBarbell grams =
+    let
+        isGtBarbell =
+            grams |> (<) weights.barbell
+    in
+    if isGtBarbell then
+        grams |> Ok
+
+    else
+        "weight needs to be greater than weight of barbell" |> Err
+
+
+validateLtMax : Grams -> Input
+validateLtMax grams =
+    let
+        isLtMax =
+            grams |> (>) maxWeight
+    in
+    if isLtMax then
+        grams |> Ok
+
+    else
+        grams
+            |> gramsToKgs
+            |> String.fromFloat
+            |> (++) "max weight allowed is "
+            |> Err
+
+
+kgsToGrams : Float -> Int
+kgsToGrams =
     (*) 1000
         >> round
 
 
-gramsToKg : Int -> Float
-gramsToKg =
+gramsToKgs : Int -> Float
+gramsToKgs =
     toFloat
         >> (*) 0.001
 
 
-findNextCompleteWeight : Int -> EnteredGrams -> EnteredGrams
+findNextCompleteWeight : Int -> Grams -> Grams
 findNextCompleteWeight step weight =
     let
         nextWeight =
@@ -249,7 +248,7 @@ findNextCompleteWeight step weight =
         nextWeight
 
 
-getIsIncomplete : EnteredGrams -> Bool
+getIsIncomplete : Grams -> Bool
 getIsIncomplete weight =
     weight
         |> suggestPlates
@@ -259,7 +258,7 @@ getIsIncomplete weight =
         |> (\remaining -> remaining > 0)
 
 
-suggestPlates : EnteredGrams -> List Plate
+suggestPlates : Grams -> List Plate
 suggestPlates weight =
     let
         plateWeightPerSide =
