@@ -2,6 +2,7 @@ module Main exposing (main)
 
 import Browser
 import Element
+import Element.Font
 import Element.Input
 import Html
 
@@ -98,8 +99,14 @@ parseEntry =
 
 view : Model -> Html.Html Msg
 view { input } =
-    Element.layout []
-        (Element.column [ Element.spacing 10 ]
+    Element.layout
+        [ Element.padding 8
+        , Element.Font.size 100
+        ]
+        (Element.column
+            [ Element.spacing 30
+            , Element.width Element.fill
+            ]
             [ viewInput
             , viewResult input
             ]
@@ -121,7 +128,7 @@ viewResult : Input -> Element.Element Msg
 viewResult entry =
     case entry of
         Err err ->
-            err |> Element.text
+            err |> viewWrappedText
 
         Ok grams ->
             let
@@ -152,18 +159,27 @@ viewPlate =
 viewCompleteness : Grams -> Element.Element Msg
 viewCompleteness weight =
     Element.column []
-        [ "Impossible" |> Element.text
-        , weight |> findNextCompleteWeight -500 |> viewSuggestion "lower"
-        , weight |> findNextCompleteWeight 500 |> viewSuggestion "higher"
+        [ "🙅" |> Element.text
+        , "Suggestions" |> Element.text
+        , weight |> viewSuggestion "Lower: " -500
+        , weight |> viewSuggestion "Higher: " 500
         ]
 
 
-viewSuggestion : String -> Grams -> Element.Element Msg
-viewSuggestion direction =
-    gramsToKgs
+viewSuggestion : String -> Int -> Grams -> Element.Element Msg
+viewSuggestion label step =
+    findNextCompleteWeight step
+        >> gramsToKgs
         >> String.fromFloat
-        >> (++) ("Suggested " ++ direction ++ ": ")
-        >> Element.text
+        >> (++) label
+        >> viewWrappedText
+
+
+viewWrappedText : String -> Element.Element Msg
+viewWrappedText =
+    Element.text
+        >> List.singleton
+        >> Element.paragraph []
 
 
 
