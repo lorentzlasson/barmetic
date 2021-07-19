@@ -5,6 +5,8 @@ import Element
 import Element.Font
 import Element.Input
 import Html
+import Widget
+import Widget.Material
 
 
 
@@ -142,11 +144,10 @@ viewInput targetWeight barbellWeight =
             , placeholder = Nothing
             , text = targetWeight
             }
-        , Element.Input.checkbox []
-            { label = Element.Input.labelHidden "check for 15 kg"
-            , onChange = EditBarbellWeightIs15Kg
-            , icon = Element.Input.defaultCheckbox
-            , checked = barbellWeight
+        , Widget.switch (Widget.Material.switch Widget.Material.defaultPalette)
+            { description = "Toggle bar size"
+            , onPress = barbellWeight |> not |> EditBarbellWeightIs15Kg |> Just
+            , active = barbellWeight
             }
         ]
 
