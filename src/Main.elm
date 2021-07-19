@@ -123,7 +123,7 @@ view : Model -> Html.Html Msg
 view model =
     let
         globalConfig =
-            Widget.Material.Typography.h2
+            Widget.Material.Typography.subtitle1
                 ++ Widget.Material.Color.textAndBackground Widget.Material.darkPalette.background
                 ++ [ Element.padding 8 ]
     in
