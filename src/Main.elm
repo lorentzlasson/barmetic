@@ -139,7 +139,7 @@ view model =
 
 
 viewInput : String -> Bool -> Element.Element Msg
-viewInput targetWeight barbellWeight =
+viewInput targetWeight barbellWeightIs15Kg =
     Element.wrappedRow [ Element.spacing 20 ]
         [ Widget.textInput (Widget.Material.textInput Widget.Material.darkPalette)
             { chips = []
@@ -148,10 +148,19 @@ viewInput targetWeight barbellWeight =
             , onChange = EditTargetWeight
             , label = "weight in kilograms"
             }
+        , viewBarbellToggle barbellWeightIs15Kg
+        ]
+
+
+viewBarbellToggle : Bool -> Element.Element Msg
+viewBarbellToggle barbellWeightIs15Kg =
+    Element.column
+        []
+        [ barbellWeightIs15Kg |> barbellWeightIs15KgToString |> Element.text
         , Widget.switch (Widget.Material.switch Widget.Material.darkPalette)
             { description = "Toggle bar size"
-            , onPress = barbellWeight |> not |> EditBarbellWeightIs15Kg |> Just
-            , active = barbellWeight
+            , onPress = barbellWeightIs15Kg |> not |> EditBarbellWeightIs15Kg |> Just
+            , active = barbellWeightIs15Kg
             }
         ]
 
@@ -313,6 +322,15 @@ boolToBarbellWeight bool =
 
     else
         20000
+
+
+barbellWeightIs15KgToString : Bool -> String
+barbellWeightIs15KgToString bool =
+    if bool then
+        "15 kg barbell"
+
+    else
+        "20 kg barbell"
 
 
 findNextCompleteWeight : Grams -> Grams -> Grams -> Grams
