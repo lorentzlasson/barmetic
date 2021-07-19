@@ -2,11 +2,12 @@ module Main exposing (main)
 
 import Browser
 import Element
-import Element.Font
 import Element.Input
 import Html
 import Widget
 import Widget.Material
+import Widget.Material.Color
+import Widget.Material.Typography
 
 
 
@@ -75,7 +76,7 @@ type alias Plate =
 init : Model
 init =
     { targetWeight = ""
-    , barbellWeightIs15Kg = False
+    , barbellWeightIs15Kg = True
     , output = Err ""
     }
 
@@ -120,13 +121,16 @@ updateOutput model =
 
 view : Model -> Html.Html Msg
 view model =
+    let
+        globalConfig =
+            Widget.Material.Typography.h2
+                ++ Widget.Material.Color.textAndBackground Widget.Material.darkPalette.background
+                ++ [ Element.padding 8 ]
+    in
     Element.layout
-        [ Element.padding 8
-        , Element.Font.size 100
-        ]
+        globalConfig
         (Element.column
             [ Element.spacing 30
-            , Element.width Element.fill
             ]
             [ viewInput model.targetWeight model.barbellWeightIs15Kg
             , viewOutput model.output
@@ -137,14 +141,14 @@ view model =
 viewInput : String -> Bool -> Element.Element Msg
 viewInput targetWeight barbellWeight =
     Element.wrappedRow [ Element.spacing 20 ]
-        [ Element.Input.text
-            []
-            { label = Element.Input.labelHidden "weight in kilograms"
-            , onChange = EditTargetWeight
-            , placeholder = Nothing
+        [ Widget.textInput (Widget.Material.textInput Widget.Material.darkPalette)
+            { chips = []
             , text = targetWeight
+            , placeholder = Just (Element.Input.placeholder [] (Element.text "Weight"))
+            , onChange = EditTargetWeight
+            , label = "weight in kilograms"
             }
-        , Widget.switch (Widget.Material.switch Widget.Material.defaultPalette)
+        , Widget.switch (Widget.Material.switch Widget.Material.darkPalette)
             { description = "Toggle bar size"
             , onPress = barbellWeight |> not |> EditBarbellWeightIs15Kg |> Just
             , active = barbellWeight
