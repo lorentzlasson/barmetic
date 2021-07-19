@@ -271,7 +271,7 @@ validateLtMax weight =
         weight |> Ok
 
     else
-        weight
+        maxWeight
             |> gramsToKgs
             |> String.fromFloat
             |> (++) "max weight allowed is "
