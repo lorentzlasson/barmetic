@@ -72,10 +72,11 @@ type alias Plate =
 
 init : Model
 init =
-    { targetWeight = ""
-    , barbellWeightIs15Kg = False
-    , output = Err ""
-    }
+    updateOutput
+        { targetWeight = "35"
+        , barbellWeightIs15Kg = False
+        , output = Err ""
+        }
 
 
 
@@ -180,6 +181,7 @@ viewTargetWeightInput targetWeight =
             , Html.Styled.Attributes.type_ "number"
             , Html.Styled.Attributes.min "0"
             , Html.Styled.Attributes.placeholder "enter weight"
+            , Html.Styled.Attributes.value targetWeight
             , maxWeight |> gramsToKgs |> String.fromFloat |> Html.Styled.Attributes.max
             , Html.Styled.Attributes.css
                 [ Css.flexGrow (Css.num 1)
