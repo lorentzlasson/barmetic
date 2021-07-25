@@ -130,7 +130,7 @@ view model =
         ]
         [ viewHackHeight
         , viewOutput model.barbellWeightIs15Kg model.output |> viewCenteredHorizontally
-        , viewInput model.barbellWeightIs15Kg
+        , viewInput model.targetWeight model.barbellWeightIs15Kg
         ]
 
 
@@ -160,16 +160,16 @@ viewCenteredHorizontally =
             ]
 
 
-viewInput : Bool -> Html.Styled.Html Msg
-viewInput barbellWeightIs15Kg =
+viewInput : String -> Bool -> Html.Styled.Html Msg
+viewInput targetWeight barbellWeightIs15Kg =
     Html.Styled.div []
         [ viewBarbellToggle barbellWeightIs15Kg
-        , viewTargetWeightInput
+        , viewTargetWeightInput targetWeight
         ]
 
 
-viewTargetWeightInput : Html.Styled.Html Msg
-viewTargetWeightInput =
+viewTargetWeightInput : String -> Html.Styled.Html Msg
+viewTargetWeightInput targetWeight =
     Html.Styled.div
         [ Html.Styled.Attributes.css
             [ Css.displayFlex
