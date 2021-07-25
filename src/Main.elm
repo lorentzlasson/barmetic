@@ -170,6 +170,7 @@ viewTargetWeightInput =
             , Html.Styled.Attributes.css
                 [ Css.flexGrow (Css.num 1)
                 , Css.fontSize (Css.rem 7)
+                , Css.textAlign Css.right
                 ]
             ]
             []
@@ -179,7 +180,11 @@ viewTargetWeightInput =
 viewBarbellToggle : Bool -> Html.Styled.Html Msg
 viewBarbellToggle barbellWeightIs15Kg =
     Html.Styled.div
-        [ Html.Styled.Events.onClick ToggleBarbellWeight ]
+        [ Html.Styled.Events.onClick ToggleBarbellWeight
+        , Html.Styled.Attributes.css
+            [ Css.textAlign Css.right
+            ]
+        ]
         [ barbellWeightIs15Kg |> barbellWeightIs15KgToString |> Html.Styled.text
         ]
 
