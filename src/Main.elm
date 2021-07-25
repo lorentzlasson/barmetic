@@ -125,6 +125,7 @@ view model =
             , Css.fontSize (Css.rem 7)
             , Css.justifyContent Css.spaceBetween
             , Css.height (Css.pct 100)
+            , Css.textAlign Css.center
             ]
         ]
         [ viewHackHeight
@@ -155,7 +156,6 @@ viewCenteredHorizontally =
                 [ Css.justifyContent Css.center
                 , Css.flexDirection Css.row
                 , Css.displayFlex
-                , Css.textAlign Css.center
                 ]
             ]
 
@@ -163,7 +163,7 @@ viewCenteredHorizontally =
 viewInput : Bool -> Html.Styled.Html Msg
 viewInput barbellWeightIs15Kg =
     Html.Styled.div []
-        [ viewBarbellToggle barbellWeightIs15Kg |> viewCenteredHorizontally
+        [ viewBarbellToggle barbellWeightIs15Kg
         , viewTargetWeightInput
         ]
 
@@ -183,7 +183,7 @@ viewTargetWeightInput =
             , Html.Styled.Attributes.css
                 [ Css.flexGrow (Css.num 1)
                 , Css.fontSize (Css.rem 7)
-                , Css.textAlign Css.right
+                , Css.textAlign Css.center
                 ]
             ]
             []
