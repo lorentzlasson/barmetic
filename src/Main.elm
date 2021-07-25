@@ -124,7 +124,7 @@ view model =
             , Css.flexDirection Css.column
             , Css.fontSize (Css.rem 7)
             , Css.justifyContent Css.spaceBetween
-            , Css.height (Css.vh 100)
+            , Css.height (Css.pct 100)
             ]
         ]
         [ viewHackHeight
