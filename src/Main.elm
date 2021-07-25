@@ -122,28 +122,42 @@ view model =
         [ Html.Styled.Attributes.css
             [ Css.displayFlex
             , Css.flexDirection Css.column
+            , Css.justifyContent Css.spaceBetween
+            , Css.height (Css.vh 100)
             ]
         ]
-        [ viewInput model.targetWeight model.barbellWeightIs15Kg
+        [ viewHackHeight
         , viewOutput model.output
+        , viewInput model.targetWeight model.barbellWeightIs15Kg
+        ]
+
+
+viewHackHeight : Html.Styled.Html Msg
+viewHackHeight =
+    let
+        hackCss =
+            """
+            html, body { height: 100% }
+            """
+    in
+    Html.Styled.node "style"
+        []
+        [ Html.Styled.text hackCss
         ]
 
 
 viewInput : String -> Bool -> Html.Styled.Html Msg
 viewInput targetWeight barbellWeightIs15Kg =
-    Html.Styled.div
-        [ Html.Styled.Attributes.css
-            [ Css.displayFlex
-            ]
-        ]
-        [ Html.Styled.input
+    Html.Styled.div []
+        [ viewBarbellToggle barbellWeightIs15Kg
+        , Html.Styled.input
             [ Html.Styled.Events.onInput EditTargetWeight
             , Html.Styled.Attributes.type_ "number"
             , Html.Styled.Attributes.min "0"
             , maxWeight |> gramsToKgs |> String.fromFloat |> Html.Styled.Attributes.max
+            , Html.Styled.Attributes.css [ Css.flexGrow (Css.num 1) ]
             ]
             []
-        , viewBarbellToggle barbellWeightIs15Kg
         ]
 
 
@@ -171,7 +185,7 @@ viewOutput output =
                     suggestions |> viewSuggestions
 
         Err err ->
-            err |> viewWrappedText
+            err |> Html.Styled.text |> List.singleton |> Html.Styled.div []
 
 
 viewPlates : List Plate -> Html.Styled.Html Msg
@@ -221,6 +235,7 @@ viewSuggestion label =
 
 viewWrappedText : String -> Html.Styled.Html Msg
 viewWrappedText =
+    -- TODO: not wrapping
     Html.Styled.text
 
 
