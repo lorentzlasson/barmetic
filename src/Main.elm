@@ -194,8 +194,21 @@ viewBarbellToggle : Bool -> Html.Styled.Html Msg
 viewBarbellToggle barbellWeightIs15Kg =
     Html.Styled.div
         [ Html.Styled.Events.onClick ToggleBarbellWeight
+        , Html.Styled.Attributes.css
+            [ Css.flexGrow (Css.num 1)
+            , Css.backgroundColor
+                (Css.rgb
+                    213
+                    213
+                    213
+                )
+            ]
         ]
-        [ barbellWeightIs15Kg |> barbellWeightIs15KgToString |> Html.Styled.text
+        [ barbellWeightIs15Kg
+            |> not
+            |> barbellWeightIs15KgToString
+            |> (\other -> "Click for " ++ other ++ "kg barbell")
+            |> Html.Styled.text
         ]
 
 
