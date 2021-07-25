@@ -238,7 +238,7 @@ viewPlates barbellWeightIs15Kg plates =
                 |> barbellWeightIs15KgToString
                 |> Html.Styled.text
                 |> List.singleton
-                |> Html.Styled.div []
+                |> Html.Styled.b []
     in
     Html.Styled.div
         [ Html.Styled.Attributes.css
