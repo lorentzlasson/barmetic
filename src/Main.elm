@@ -245,11 +245,21 @@ viewWrappedText =
 
 calculateOutput : Grams -> String -> Output
 calculateOutput barbellWeight =
-    validateNumber
+    validateSomething
+        >> Result.andThen validateNumber
         >> Result.andThen validateHalfKgAble
         >> Result.andThen (validateGtBarbell barbellWeight)
         >> Result.andThen validateLtMax
         >> Result.map (calculateValidOutput barbellWeight)
+
+
+validateSomething : String -> Result String String
+validateSomething raw =
+    if String.isEmpty raw |> not then
+        raw |> Ok
+
+    else
+        "no weight entered" |> Err
 
 
 validateNumber : String -> Result String Grams
