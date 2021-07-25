@@ -74,7 +74,7 @@ init : Model
 init =
     { targetWeight = ""
     , barbellWeightIs15Kg = False
-    , output = Ok (PlateList [ 3000, 2000, 1000 ])
+    , output = Err ""
     }
 
 
