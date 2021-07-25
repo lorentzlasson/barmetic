@@ -84,7 +84,7 @@ init =
 
 type Msg
     = EditTargetWeight String
-    | EditBarbellWeightIs15Kg Bool
+    | ToggleBarbellWeight
 
 
 update : Msg -> Model -> Model
@@ -99,8 +99,8 @@ updateInput msg model =
         EditTargetWeight targetWeight ->
             { model | targetWeight = targetWeight }
 
-        EditBarbellWeightIs15Kg barbellWeight ->
-            { model | barbellWeightIs15Kg = barbellWeight }
+        ToggleBarbellWeight ->
+            { model | barbellWeightIs15Kg = model.barbellWeightIs15Kg |> not }
 
 
 updateOutput : Model -> Model
@@ -122,6 +122,7 @@ view model =
         [ Html.Styled.Attributes.css
             [ Css.displayFlex
             , Css.flexDirection Css.column
+            , Css.fontSize (Css.rem 5)
             , Css.justifyContent Css.spaceBetween
             , Css.height (Css.vh 100)
             ]
@@ -150,12 +151,26 @@ viewInput : String -> Bool -> Html.Styled.Html Msg
 viewInput targetWeight barbellWeightIs15Kg =
     Html.Styled.div []
         [ viewBarbellToggle barbellWeightIs15Kg
-        , Html.Styled.input
+        , viewTargetWeightInput targetWeight
+        ]
+
+
+viewTargetWeightInput : String -> Html.Styled.Html Msg
+viewTargetWeightInput targetWeight =
+    Html.Styled.div
+        [ Html.Styled.Attributes.css
+            [ Css.displayFlex
+            ]
+        ]
+        [ Html.Styled.input
             [ Html.Styled.Events.onInput EditTargetWeight
             , Html.Styled.Attributes.type_ "number"
             , Html.Styled.Attributes.min "0"
             , maxWeight |> gramsToKgs |> String.fromFloat |> Html.Styled.Attributes.max
-            , Html.Styled.Attributes.css [ Css.flexGrow (Css.num 1) ]
+            , Html.Styled.Attributes.css
+                [ Css.flexGrow (Css.num 1)
+                , Css.fontSize (Css.rem 5)
+                ]
             ]
             []
         ]
@@ -163,13 +178,9 @@ viewInput targetWeight barbellWeightIs15Kg =
 
 viewBarbellToggle : Bool -> Html.Styled.Html Msg
 viewBarbellToggle barbellWeightIs15Kg =
-    Html.Styled.div []
+    Html.Styled.div
+        [ Html.Styled.Events.onClick ToggleBarbellWeight ]
         [ barbellWeightIs15Kg |> barbellWeightIs15KgToString |> Html.Styled.text
-        , Html.Styled.input
-            [ Html.Styled.Events.onCheck EditBarbellWeightIs15Kg
-            , Html.Styled.Attributes.type_ "checkbox"
-            ]
-            []
         ]
 
 
