@@ -1,9 +1,10 @@
 module Main exposing (main)
 
 import Browser
-import Html
-import Html.Attributes
-import Html.Events
+import Css
+import Html.Styled
+import Html.Styled.Attributes
+import Html.Styled.Events
 
 
 
@@ -15,7 +16,7 @@ main =
     Browser.sandbox
         { init = init
         , update = update
-        , view = view
+        , view = view >> Html.Styled.toUnstyled
         }
 
 
@@ -72,7 +73,7 @@ type alias Plate =
 init : Model
 init =
     { targetWeight = ""
-    , barbellWeightIs15Kg = True
+    , barbellWeightIs15Kg = False
     , output = Err ""
     }
 
@@ -115,42 +116,50 @@ updateOutput model =
 -- VIEW
 
 
-view : Model -> Html.Html Msg
+view : Model -> Html.Styled.Html Msg
 view model =
-    Html.div
-        []
+    Html.Styled.div
+        [ Html.Styled.Attributes.css
+            [ Css.displayFlex
+            , Css.flexDirection Css.column
+            ]
+        ]
         [ viewInput model.targetWeight model.barbellWeightIs15Kg
         , viewOutput model.output
         ]
 
 
-viewInput : String -> Bool -> Html.Html Msg
+viewInput : String -> Bool -> Html.Styled.Html Msg
 viewInput targetWeight barbellWeightIs15Kg =
-    Html.div []
-        [ Html.input
-            [ Html.Events.onInput EditTargetWeight
-            , Html.Attributes.type_ "number"
-            , Html.Attributes.min "0"
-            , maxWeight |> gramsToKgs |> String.fromFloat |> Html.Attributes.max
+    Html.Styled.div
+        [ Html.Styled.Attributes.css
+            [ Css.displayFlex
+            ]
+        ]
+        [ Html.Styled.input
+            [ Html.Styled.Events.onInput EditTargetWeight
+            , Html.Styled.Attributes.type_ "number"
+            , Html.Styled.Attributes.min "0"
+            , maxWeight |> gramsToKgs |> String.fromFloat |> Html.Styled.Attributes.max
             ]
             []
         , viewBarbellToggle barbellWeightIs15Kg
         ]
 
 
-viewBarbellToggle : Bool -> Html.Html Msg
+viewBarbellToggle : Bool -> Html.Styled.Html Msg
 viewBarbellToggle barbellWeightIs15Kg =
-    Html.div []
-        [ barbellWeightIs15Kg |> barbellWeightIs15KgToString |> Html.text
-        , Html.input
-            [ Html.Events.onCheck EditBarbellWeightIs15Kg
-            , Html.Attributes.type_ "checkbox"
+    Html.Styled.div []
+        [ barbellWeightIs15Kg |> barbellWeightIs15KgToString |> Html.Styled.text
+        , Html.Styled.input
+            [ Html.Styled.Events.onCheck EditBarbellWeightIs15Kg
+            , Html.Styled.Attributes.type_ "checkbox"
             ]
             []
         ]
 
 
-viewOutput : Output -> Html.Html Msg
+viewOutput : Output -> Html.Styled.Html Msg
 viewOutput output =
     case output of
         Ok validOutput ->
@@ -165,33 +174,44 @@ viewOutput output =
             err |> viewWrappedText
 
 
-viewPlates : List Plate -> Html.Html Msg
+viewPlates : List Plate -> Html.Styled.Html Msg
 viewPlates =
     List.map viewPlate
-        >> List.intersperse (Html.text " | ")
-        >> Html.div []
+        >> List.intersperse (Html.Styled.text " | ")
+        >> Html.Styled.div
+            [ Html.Styled.Attributes.css
+                [ Css.displayFlex
+                ]
+            ]
 
 
-viewPlate : Grams -> Html.Html Msg
+viewPlate : Grams -> Html.Styled.Html Msg
 viewPlate =
     gramsToKgs
         >> String.fromFloat
-        >> Html.text
+        >> Html.Styled.text
         >> List.singleton
-        >> Html.div []
+        >> Html.Styled.div []
 
 
-viewSuggestions : ( Grams, Grams ) -> Html.Html Msg
+viewSuggestions : ( Grams, Grams ) -> Html.Styled.Html Msg
 viewSuggestions ( lower, higher ) =
-    Html.div []
-        [ "🙅" |> Html.text
-        , "Suggestions" |> Html.text
+    Html.Styled.div
+        [ Html.Styled.Attributes.css
+            [ Css.displayFlex
+            , Css.flexDirection Css.column
+            ]
+        ]
+        [ "🙅" |> Html.Styled.text
+        , "Suggestions" |> Html.Styled.text
+        , Html.Styled.br [] []
         , lower |> viewSuggestion "Lower: "
+        , Html.Styled.br [] []
         , higher |> viewSuggestion "Higher: "
         ]
 
 
-viewSuggestion : String -> Grams -> Html.Html Msg
+viewSuggestion : String -> Grams -> Html.Styled.Html Msg
 viewSuggestion label =
     gramsToKgs
         >> String.fromFloat
@@ -199,9 +219,9 @@ viewSuggestion label =
         >> viewWrappedText
 
 
-viewWrappedText : String -> Html.Html Msg
+viewWrappedText : String -> Html.Styled.Html Msg
 viewWrappedText =
-    Html.text
+    Html.Styled.text
 
 
 
