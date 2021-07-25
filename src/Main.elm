@@ -74,7 +74,7 @@ init : Model
 init =
     { targetWeight = ""
     , barbellWeightIs15Kg = False
-    , output = Err ""
+    , output = Ok (PlateList [ 3000, 2000, 1000 ])
     }
 
 
@@ -205,17 +205,45 @@ viewOutput output =
 
 
 viewPlates : List Plate -> Html.Styled.Html Msg
-viewPlates =
-    List.map viewPlate
-        >> List.intersperse (Html.Styled.text " | ")
-        >> Html.Styled.div
-            [ Html.Styled.Attributes.css
-                [ Css.displayFlex
-                ]
+viewPlates plates =
+    let
+        middle =
+            Html.Styled.div [] [ Html.Styled.text "🏋️" ]
+    in
+    Html.Styled.div
+        [ Html.Styled.Attributes.css
+            [ Css.displayFlex
+            , Css.justifyContent Css.center
             ]
+        ]
+        (viewPlates_ plates [ middle ])
 
 
-viewPlate : Grams -> Html.Styled.Html Msg
+viewPlates_ : List Plate -> List (Html.Styled.Html Msg) -> List (Html.Styled.Html Msg)
+viewPlates_ plates elements =
+    case plates of
+        [] ->
+            elements
+
+        x :: xs ->
+            viewPlates_ xs (viewPlatesWithPlate x elements)
+
+
+viewPlateSeparator : Html.Styled.Html Msg
+viewPlateSeparator =
+    Html.Styled.div [] [ Html.Styled.text "|" ]
+
+
+viewPlatesWithPlate : Plate -> List (Html.Styled.Html Msg) -> List (Html.Styled.Html Msg)
+viewPlatesWithPlate plate plateElements =
+    let
+        plateElement =
+            viewPlate plate
+    in
+    [ plateElement, viewPlateSeparator ] ++ plateElements ++ [ viewPlateSeparator, plateElement ]
+
+
+viewPlate : Plate -> Html.Styled.Html Msg
 viewPlate =
     gramsToKgs
         >> String.fromFloat
