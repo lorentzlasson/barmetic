@@ -179,6 +179,7 @@ viewTargetWeightInput =
             [ Html.Styled.Events.onInput EditTargetWeight
             , Html.Styled.Attributes.type_ "number"
             , Html.Styled.Attributes.min "0"
+            , Html.Styled.Attributes.placeholder "enter weight"
             , maxWeight |> gramsToKgs |> String.fromFloat |> Html.Styled.Attributes.max
             , Html.Styled.Attributes.css
                 [ Css.flexGrow (Css.num 1)
