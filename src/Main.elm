@@ -107,7 +107,7 @@ updateOutput : Model -> Model
 updateOutput model =
     let
         barbellWeight =
-            model.barbellWeightIs15Kg |> boolToBarbellWeight
+            model.barbellWeightIs15Kg |> barbellWeightIs15KgToGrams
     in
     { model | output = calculateOutput barbellWeight model.targetWeight }
 
@@ -404,17 +404,15 @@ gramsToKgs =
         >> (*) 0.001
 
 
-boolToBarbellWeight : Bool -> Grams
-boolToBarbellWeight bool =
-    if bool then
-        15000
-
-    else
-        20000
+barbellWeightIs15KgToGrams : Bool -> Grams
+barbellWeightIs15KgToGrams =
+    barbellWeightIs15KgToKgs
+        >> toFloat
+        >> kgsToGrams
 
 
-barbellWeightIs15KgToInt : Bool -> Int
-barbellWeightIs15KgToInt bool =
+barbellWeightIs15KgToKgs : Bool -> Int
+barbellWeightIs15KgToKgs bool =
     if bool then
         15
 
@@ -424,7 +422,7 @@ barbellWeightIs15KgToInt bool =
 
 barbellWeightIs15KgToString : Bool -> String
 barbellWeightIs15KgToString =
-    barbellWeightIs15KgToInt
+    barbellWeightIs15KgToKgs
         >> String.fromInt
 
 
