@@ -128,7 +128,7 @@ view model =
             ]
         ]
         [ viewHackHeight
-        , viewOutput model.barbellWeightIs15Kg model.output
+        , viewOutput model.barbellWeightIs15Kg model.output |> viewCenteredHorizontally
         , viewInput model.barbellWeightIs15Kg
         ]
 
@@ -147,10 +147,23 @@ viewHackHeight =
         ]
 
 
+viewCenteredHorizontally : Html.Styled.Html Msg -> Html.Styled.Html Msg
+viewCenteredHorizontally =
+    List.singleton
+        >> Html.Styled.div
+            [ Html.Styled.Attributes.css
+                [ Css.justifyContent Css.center
+                , Css.flexDirection Css.row
+                , Css.displayFlex
+                , Css.textAlign Css.center
+                ]
+            ]
+
+
 viewInput : Bool -> Html.Styled.Html Msg
 viewInput barbellWeightIs15Kg =
     Html.Styled.div []
-        [ viewBarbellToggle barbellWeightIs15Kg
+        [ viewBarbellToggle barbellWeightIs15Kg |> viewCenteredHorizontally
         , viewTargetWeightInput
         ]
 
@@ -181,9 +194,6 @@ viewBarbellToggle : Bool -> Html.Styled.Html Msg
 viewBarbellToggle barbellWeightIs15Kg =
     Html.Styled.div
         [ Html.Styled.Events.onClick ToggleBarbellWeight
-        , Html.Styled.Attributes.css
-            [ Css.textAlign Css.right
-            ]
         ]
         [ barbellWeightIs15Kg |> barbellWeightIs15KgToString |> Html.Styled.text
         ]
@@ -201,7 +211,10 @@ viewOutput barbellWeightIs15Kg output =
                     suggestions |> viewSuggestions
 
         Err err ->
-            err |> Html.Styled.text |> List.singleton |> Html.Styled.div []
+            err
+                |> Html.Styled.text
+                |> List.singleton
+                |> Html.Styled.div []
 
 
 viewPlates : Bool -> List Plate -> Html.Styled.Html Msg
@@ -217,7 +230,6 @@ viewPlates barbellWeightIs15Kg plates =
     Html.Styled.div
         [ Html.Styled.Attributes.css
             [ Css.displayFlex
-            , Css.justifyContent Css.center
             ]
         ]
         (viewPlates_ plates [ middle ])
