@@ -128,7 +128,7 @@ view model =
             ]
         ]
         [ viewHackHeight
-        , viewOutput model.output
+        , viewOutput model.barbellWeightIs15Kg model.output
         , viewInput model.barbellWeightIs15Kg
         ]
 
@@ -189,13 +189,13 @@ viewBarbellToggle barbellWeightIs15Kg =
         ]
 
 
-viewOutput : Output -> Html.Styled.Html Msg
-viewOutput output =
+viewOutput : Bool -> Output -> Html.Styled.Html Msg
+viewOutput barbellWeightIs15Kg output =
     case output of
         Ok validOutput ->
             case validOutput of
                 PlateList plates ->
-                    plates |> viewPlates
+                    plates |> viewPlates barbellWeightIs15Kg
 
                 Suggestions suggestions ->
                     suggestions |> viewSuggestions
@@ -204,11 +204,15 @@ viewOutput output =
             err |> Html.Styled.text |> List.singleton |> Html.Styled.div []
 
 
-viewPlates : List Plate -> Html.Styled.Html Msg
-viewPlates plates =
+viewPlates : Bool -> List Plate -> Html.Styled.Html Msg
+viewPlates barbellWeightIs15Kg plates =
     let
         middle =
-            Html.Styled.div [] [ Html.Styled.text "🏋️" ]
+            barbellWeightIs15Kg
+                |> barbellWeightIs15KgToString
+                |> Html.Styled.text
+                |> List.singleton
+                |> Html.Styled.div []
     in
     Html.Styled.div
         [ Html.Styled.Attributes.css
@@ -397,13 +401,19 @@ boolToBarbellWeight bool =
         20000
 
 
-barbellWeightIs15KgToString : Bool -> String
-barbellWeightIs15KgToString bool =
+barbellWeightIs15KgToInt : Bool -> Int
+barbellWeightIs15KgToInt bool =
     if bool then
-        "15 kg barbell"
+        15
 
     else
-        "20 kg barbell"
+        20
+
+
+barbellWeightIs15KgToString : Bool -> String
+barbellWeightIs15KgToString =
+    barbellWeightIs15KgToInt
+        >> String.fromInt
 
 
 findNextCompleteWeight : Grams -> Grams -> Grams -> Grams
