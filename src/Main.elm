@@ -122,7 +122,7 @@ view model =
         [ Html.Styled.Attributes.css
             [ Css.displayFlex
             , Css.flexDirection Css.column
-            , Css.fontSize (Css.rem 5)
+            , Css.fontSize (Css.rem 7)
             , Css.justifyContent Css.spaceBetween
             , Css.height (Css.vh 100)
             ]
@@ -169,7 +169,7 @@ viewTargetWeightInput targetWeight =
             , maxWeight |> gramsToKgs |> String.fromFloat |> Html.Styled.Attributes.max
             , Html.Styled.Attributes.css
                 [ Css.flexGrow (Css.num 1)
-                , Css.fontSize (Css.rem 5)
+                , Css.fontSize (Css.rem 7)
                 ]
             ]
             []
