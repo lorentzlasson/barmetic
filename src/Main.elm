@@ -1,13 +1,9 @@
 module Main exposing (main)
 
 import Browser
-import Element
-import Element.Input
 import Html
-import Widget
-import Widget.Material
-import Widget.Material.Color
-import Widget.Material.Typography
+import Html.Attributes
+import Html.Events
 
 
 
@@ -121,51 +117,40 @@ updateOutput model =
 
 view : Model -> Html.Html Msg
 view model =
-    let
-        globalConfig =
-            Widget.Material.Typography.subtitle1
-                ++ Widget.Material.Color.textAndBackground Widget.Material.darkPalette.background
-                ++ [ Element.padding 8 ]
-    in
-    Element.layout
-        globalConfig
-        (Element.column
-            [ Element.spacing 30
-            ]
-            [ viewInput model.targetWeight model.barbellWeightIs15Kg
-            , viewOutput model.output
-            ]
-        )
+    Html.div
+        []
+        [ viewInput model.targetWeight model.barbellWeightIs15Kg
+        , viewOutput model.output
+        ]
 
 
-viewInput : String -> Bool -> Element.Element Msg
+viewInput : String -> Bool -> Html.Html Msg
 viewInput targetWeight barbellWeightIs15Kg =
-    Element.wrappedRow [ Element.spacing 20 ]
-        [ Widget.textInput (Widget.Material.textInput Widget.Material.darkPalette)
-            { chips = []
-            , text = targetWeight
-            , placeholder = Just (Element.Input.placeholder [] (Element.text "Weight"))
-            , onChange = EditTargetWeight
-            , label = "weight in kilograms"
-            }
+    Html.div []
+        [ Html.input
+            [ Html.Events.onInput EditTargetWeight
+            , Html.Attributes.type_ "number"
+            , Html.Attributes.min "0"
+            , maxWeight |> gramsToKgs |> String.fromFloat |> Html.Attributes.max
+            ]
+            []
         , viewBarbellToggle barbellWeightIs15Kg
         ]
 
 
-viewBarbellToggle : Bool -> Element.Element Msg
+viewBarbellToggle : Bool -> Html.Html Msg
 viewBarbellToggle barbellWeightIs15Kg =
-    Element.column
-        []
-        [ barbellWeightIs15Kg |> barbellWeightIs15KgToString |> Element.text
-        , Widget.switch (Widget.Material.switch Widget.Material.darkPalette)
-            { description = "Toggle bar size"
-            , onPress = barbellWeightIs15Kg |> not |> EditBarbellWeightIs15Kg |> Just
-            , active = barbellWeightIs15Kg
-            }
+    Html.div []
+        [ barbellWeightIs15Kg |> barbellWeightIs15KgToString |> Html.text
+        , Html.input
+            [ Html.Events.onCheck EditBarbellWeightIs15Kg
+            , Html.Attributes.type_ "checkbox"
+            ]
+            []
         ]
 
 
-viewOutput : Output -> Element.Element Msg
+viewOutput : Output -> Html.Html Msg
 viewOutput output =
     case output of
         Ok validOutput ->
@@ -180,32 +165,33 @@ viewOutput output =
             err |> viewWrappedText
 
 
-viewPlates : List Plate -> Element.Element Msg
+viewPlates : List Plate -> Html.Html Msg
 viewPlates =
     List.map viewPlate
-        >> List.intersperse (Element.text " | ")
-        >> Element.wrappedRow [ Element.spacing 10 ]
+        >> List.intersperse (Html.text " | ")
+        >> Html.div []
 
 
-viewPlate : Grams -> Element.Element Msg
+viewPlate : Grams -> Html.Html Msg
 viewPlate =
     gramsToKgs
         >> String.fromFloat
-        >> Element.text
-        >> Element.el []
+        >> Html.text
+        >> List.singleton
+        >> Html.div []
 
 
-viewSuggestions : ( Grams, Grams ) -> Element.Element Msg
+viewSuggestions : ( Grams, Grams ) -> Html.Html Msg
 viewSuggestions ( lower, higher ) =
-    Element.column []
-        [ "🙅" |> Element.text
-        , "Suggestions" |> Element.text
+    Html.div []
+        [ "🙅" |> Html.text
+        , "Suggestions" |> Html.text
         , lower |> viewSuggestion "Lower: "
         , higher |> viewSuggestion "Higher: "
         ]
 
 
-viewSuggestion : String -> Grams -> Element.Element Msg
+viewSuggestion : String -> Grams -> Html.Html Msg
 viewSuggestion label =
     gramsToKgs
         >> String.fromFloat
@@ -213,11 +199,9 @@ viewSuggestion label =
         >> viewWrappedText
 
 
-viewWrappedText : String -> Element.Element Msg
+viewWrappedText : String -> Html.Html Msg
 viewWrappedText =
-    Element.text
-        >> List.singleton
-        >> Element.paragraph []
+    Html.text
 
 
 
