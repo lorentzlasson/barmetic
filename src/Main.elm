@@ -257,16 +257,77 @@ viewPlates barbellWeightIs15Kg plates =
 
 
 viewPlate : Plate -> Html.Styled.Html Msg
-viewPlate =
-    gramsToKgs
-        >> String.fromFloat
-        >> Html.Styled.text
-        >> List.singleton
-        >> Html.Styled.div
+viewPlate plate =
+    let
+        plateColor =
+            getPlateColor plate
+
+        plateTextColor =
+            getPlateTextColor plate
+    in
+    plate
+        |> gramsToKgs
+        |> String.fromFloat
+        |> Html.Styled.text
+        |> List.singleton
+        |> Html.Styled.div
             [ Html.Styled.Attributes.css
                 [ Css.borderBottomStyle Css.solid
+                , Css.backgroundColor plateColor
+                , Css.color plateTextColor
                 ]
             ]
+
+
+getPlateColor : Plate -> Css.Color
+getPlateColor plate =
+    case plate of
+        -- gray
+        500 ->
+            Css.rgb 100 100 100
+
+        -- gray
+        1250 ->
+            Css.rgb 100 100 100
+
+        -- gray
+        2500 ->
+            Css.rgb 100 100 100
+
+        -- black
+        5000 ->
+            Css.rgb 38 38 38
+
+        -- green
+        10000 ->
+            Css.rgb 23 176 0
+
+        -- yellow
+        15000 ->
+            Css.rgb 226 212 2
+
+        -- blue
+        20000 ->
+            Css.rgb 0 71 138
+
+        -- red
+        25000 ->
+            Css.rgb 125 0 0
+
+        -- pink
+        _ ->
+            Css.rgb 255 51 207
+
+
+getPlateTextColor : Plate -> Css.Color
+getPlateTextColor plate =
+    if plate == 15000 then
+        -- dark
+        Css.rgb 0 0 0
+
+    else
+        -- light
+        Css.rgb 255 255 255
 
 
 viewSuggestions : ( Grams, Grams ) -> Html.Styled.Html Msg
