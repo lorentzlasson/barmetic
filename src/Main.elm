@@ -122,7 +122,7 @@ view model =
     Html.Styled.div
         [ Html.Styled.Attributes.css
             [ Css.displayFlex
-            , Css.flexDirection Css.column
+            , Css.flexDirection Css.columnReverse
             , Css.fontSize (Css.rem 7)
             , Css.justifyContent Css.spaceBetween
             , Css.height (Css.pct 100)
@@ -130,8 +130,8 @@ view model =
             ]
         ]
         [ viewHackHeight
-        , viewOutput model.barbellWeightIs15Kg model.output |> viewCenteredHorizontally
         , viewInput model.targetWeight model.barbellWeightIs15Kg
+        , viewOutput model.barbellWeightIs15Kg model.output |> viewCenteredHorizontally
         ]
 
 
