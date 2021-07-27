@@ -237,12 +237,8 @@ viewOutputContent barbellWeightIs15Kg output =
 viewPlates : Bool -> List Plate -> Html.Styled.Html Msg
 viewPlates barbellWeightIs15Kg plates =
     let
-        base =
-            barbellWeightIs15Kg
-                |> barbellWeightIs15KgToString
-                |> Html.Styled.text
-                |> List.singleton
-                |> Html.Styled.b []
+        baseElement =
+            viewBase barbellWeightIs15Kg
 
         platesElements =
             plates
@@ -256,7 +252,16 @@ viewPlates barbellWeightIs15Kg plates =
             , Css.overflow Css.auto
             ]
         ]
-        (base :: platesElements)
+        (baseElement :: platesElements)
+
+
+viewBase : Bool -> Html.Styled.Html Msg
+viewBase barbellWeightIs15Kg =
+    barbellWeightIs15Kg
+        |> barbellWeightIs15KgToString
+        |> Html.Styled.text
+        |> List.singleton
+        |> Html.Styled.b []
 
 
 viewPlate : Plate -> Html.Styled.Html Msg
