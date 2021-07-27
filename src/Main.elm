@@ -209,6 +209,7 @@ viewOutput barbellWeightIs15Kg output =
             [ Css.justifyContent Css.center
             , Css.flexDirection Css.row
             , Css.displayFlex
+            , Css.overflow Css.auto
             ]
         ]
         [ viewOutputContent barbellWeightIs15Kg output
@@ -252,6 +253,7 @@ viewPlates barbellWeightIs15Kg plates =
             [ Css.displayFlex
             , Css.flexDirection Css.columnReverse
             , Css.flexGrow (Css.num 1)
+            , Css.overflow Css.auto
             ]
         ]
         (base :: platesElements)
