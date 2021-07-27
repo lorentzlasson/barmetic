@@ -124,7 +124,6 @@ view model =
             [ Css.displayFlex
             , Css.flexDirection Css.columnReverse
             , Css.fontSize (Css.rem 7)
-            , Css.justifyContent Css.spaceBetween
             , Css.height (Css.pct 100)
             , Css.textAlign Css.center
             ]
@@ -236,43 +235,24 @@ viewOutput barbellWeightIs15Kg output =
 viewPlates : Bool -> List Plate -> Html.Styled.Html Msg
 viewPlates barbellWeightIs15Kg plates =
     let
-        middle =
+        base =
             barbellWeightIs15Kg
                 |> barbellWeightIs15KgToString
                 |> Html.Styled.text
                 |> List.singleton
                 |> Html.Styled.b []
+
+        platesElements =
+            plates
+                |> List.map viewPlate
     in
     Html.Styled.div
         [ Html.Styled.Attributes.css
             [ Css.displayFlex
+            , Css.flexDirection Css.columnReverse
             ]
         ]
-        (viewPlates_ plates [ middle ])
-
-
-viewPlates_ : List Plate -> List (Html.Styled.Html Msg) -> List (Html.Styled.Html Msg)
-viewPlates_ plates elements =
-    case plates of
-        [] ->
-            elements
-
-        x :: xs ->
-            viewPlates_ xs (viewPlatesWithPlate x elements)
-
-
-viewPlateSeparator : Html.Styled.Html Msg
-viewPlateSeparator =
-    Html.Styled.div [] [ Html.Styled.text "|" ]
-
-
-viewPlatesWithPlate : Plate -> List (Html.Styled.Html Msg) -> List (Html.Styled.Html Msg)
-viewPlatesWithPlate plate plateElements =
-    let
-        plateElement =
-            viewPlate plate
-    in
-    [ plateElement, viewPlateSeparator ] ++ plateElements ++ [ viewPlateSeparator, plateElement ]
+        (base :: platesElements)
 
 
 viewPlate : Plate -> Html.Styled.Html Msg
