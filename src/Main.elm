@@ -130,7 +130,7 @@ view model =
         ]
         [ viewHackHeight
         , viewInput model.targetWeight model.barbellWeightIs15Kg
-        , viewOutput model.barbellWeightIs15Kg model.output |> viewCenteredHorizontally
+        , viewOutput model.barbellWeightIs15Kg model.output
         ]
 
 
@@ -146,18 +146,6 @@ viewHackHeight =
         []
         [ Html.Styled.text hackCss
         ]
-
-
-viewCenteredHorizontally : Html.Styled.Html Msg -> Html.Styled.Html Msg
-viewCenteredHorizontally =
-    List.singleton
-        >> Html.Styled.div
-            [ Html.Styled.Attributes.css
-                [ Css.justifyContent Css.center
-                , Css.flexDirection Css.row
-                , Css.displayFlex
-                ]
-            ]
 
 
 viewInput : String -> Bool -> Html.Styled.Html Msg
@@ -216,6 +204,19 @@ viewBarbellToggle barbellWeightIs15Kg =
 
 viewOutput : Bool -> Output -> Html.Styled.Html Msg
 viewOutput barbellWeightIs15Kg output =
+    Html.Styled.div
+        [ Html.Styled.Attributes.css
+            [ Css.justifyContent Css.center
+            , Css.flexDirection Css.row
+            , Css.displayFlex
+            ]
+        ]
+        [ viewOutputContent barbellWeightIs15Kg output
+        ]
+
+
+viewOutputContent : Bool -> Output -> Html.Styled.Html Msg
+viewOutputContent barbellWeightIs15Kg output =
     case output of
         Ok validOutput ->
             case validOutput of
