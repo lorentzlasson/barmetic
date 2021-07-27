@@ -250,6 +250,7 @@ viewPlates barbellWeightIs15Kg plates =
         [ Html.Styled.Attributes.css
             [ Css.displayFlex
             , Css.flexDirection Css.columnReverse
+            , Css.flexGrow (Css.num 1)
             ]
         ]
         (base :: platesElements)
@@ -261,7 +262,11 @@ viewPlate =
         >> String.fromFloat
         >> Html.Styled.text
         >> List.singleton
-        >> Html.Styled.div []
+        >> Html.Styled.div
+            [ Html.Styled.Attributes.css
+                [ Css.borderBottomStyle Css.solid
+                ]
+            ]
 
 
 viewSuggestions : ( Grams, Grams ) -> Html.Styled.Html Msg
