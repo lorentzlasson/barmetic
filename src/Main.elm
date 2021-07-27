@@ -257,11 +257,29 @@ viewPlates barbellWeightIs15Kg plates =
 
 viewBase : Bool -> Html.Styled.Html Msg
 viewBase barbellWeightIs15Kg =
-    barbellWeightIs15Kg
-        |> barbellWeightIs15KgToString
-        |> Html.Styled.text
-        |> List.singleton
-        |> Html.Styled.b []
+    let
+        figureElement =
+            barbellWeightIs15Kg
+                |> barbellWeightIs15KgToString
+                |> Html.Styled.text
+                |> List.singleton
+                |> Html.Styled.b []
+    in
+    Html.Styled.div
+        [ Html.Styled.Attributes.css
+            [ Css.displayFlex
+            , Css.justifyContent Css.center
+            ]
+        ]
+        [ viewBaseFlare
+        , figureElement
+        , viewBaseFlare
+        ]
+
+
+viewBaseFlare : Html.Styled.Html Msg
+viewBaseFlare =
+    Html.Styled.text "🏋️"
 
 
 viewPlate : Plate -> Html.Styled.Html Msg
