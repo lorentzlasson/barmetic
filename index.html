@@ -7790,11 +7790,6 @@ var $rtfeldman$elm_css$Css$prop1 = F2(
 		return A2($rtfeldman$elm_css$Css$property, key, arg.value);
 	});
 var $rtfeldman$elm_css$Css$center = $rtfeldman$elm_css$Css$prop1('center');
-var $rtfeldman$elm_css$Css$Structure$Compatible = {$: 'Compatible'};
-var $rtfeldman$elm_css$Css$row = {flexDirection: $rtfeldman$elm_css$Css$Structure$Compatible, flexDirectionOrWrap: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'row'};
-var $rtfeldman$elm_css$Css$columnReverse = _Utils_update(
-	$rtfeldman$elm_css$Css$row,
-	{value: 'column-reverse'});
 var $rtfeldman$elm_css$VirtualDom$Styled$Attribute = F3(
 	function (a, b, c) {
 		return {$: 'Attribute', a: a, b: b, c: c};
@@ -7842,35 +7837,8 @@ var $rtfeldman$elm_css$VirtualDom$Styled$Node = F3(
 var $rtfeldman$elm_css$VirtualDom$Styled$node = $rtfeldman$elm_css$VirtualDom$Styled$Node;
 var $rtfeldman$elm_css$Html$Styled$node = $rtfeldman$elm_css$VirtualDom$Styled$node;
 var $rtfeldman$elm_css$Html$Styled$div = $rtfeldman$elm_css$Html$Styled$node('div');
-var $rtfeldman$elm_css$Css$flexDirection = $rtfeldman$elm_css$Css$prop1('flex-direction');
 var $rtfeldman$elm_css$Css$fontSize = $rtfeldman$elm_css$Css$prop1('font-size');
 var $rtfeldman$elm_css$Css$height = $rtfeldman$elm_css$Css$prop1('height');
-var $rtfeldman$elm_css$Css$PercentageUnits = {$: 'PercentageUnits'};
-var $rtfeldman$elm_css$Css$Internal$lengthConverter = F3(
-	function (units, unitLabel, numericValue) {
-		return {
-			absoluteLength: $rtfeldman$elm_css$Css$Structure$Compatible,
-			calc: $rtfeldman$elm_css$Css$Structure$Compatible,
-			flexBasis: $rtfeldman$elm_css$Css$Structure$Compatible,
-			fontSize: $rtfeldman$elm_css$Css$Structure$Compatible,
-			length: $rtfeldman$elm_css$Css$Structure$Compatible,
-			lengthOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible,
-			lengthOrAutoOrCoverOrContain: $rtfeldman$elm_css$Css$Structure$Compatible,
-			lengthOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible,
-			lengthOrNone: $rtfeldman$elm_css$Css$Structure$Compatible,
-			lengthOrNoneOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible,
-			lengthOrNumber: $rtfeldman$elm_css$Css$Structure$Compatible,
-			lengthOrNumberOrAutoOrNoneOrContent: $rtfeldman$elm_css$Css$Structure$Compatible,
-			numericValue: numericValue,
-			textIndent: $rtfeldman$elm_css$Css$Structure$Compatible,
-			unitLabel: unitLabel,
-			units: units,
-			value: _Utils_ap(
-				$elm$core$String$fromFloat(numericValue),
-				unitLabel)
-		};
-	});
-var $rtfeldman$elm_css$Css$pct = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PercentageUnits, '%');
 var $rtfeldman$elm_css$Css$Preprocess$ApplyStyles = function (a) {
 	return {$: 'ApplyStyles', a: a};
 };
@@ -7935,7 +7903,41 @@ var $rtfeldman$elm_css$Css$Internal$getOverloadedProperty = F3(
 		}
 	});
 var $rtfeldman$elm_css$Css$Internal$IncompatibleUnits = {$: 'IncompatibleUnits'};
+var $rtfeldman$elm_css$Css$Structure$Compatible = {$: 'Compatible'};
+var $rtfeldman$elm_css$Css$Internal$lengthConverter = F3(
+	function (units, unitLabel, numericValue) {
+		return {
+			absoluteLength: $rtfeldman$elm_css$Css$Structure$Compatible,
+			calc: $rtfeldman$elm_css$Css$Structure$Compatible,
+			flexBasis: $rtfeldman$elm_css$Css$Structure$Compatible,
+			fontSize: $rtfeldman$elm_css$Css$Structure$Compatible,
+			length: $rtfeldman$elm_css$Css$Structure$Compatible,
+			lengthOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible,
+			lengthOrAutoOrCoverOrContain: $rtfeldman$elm_css$Css$Structure$Compatible,
+			lengthOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible,
+			lengthOrNone: $rtfeldman$elm_css$Css$Structure$Compatible,
+			lengthOrNoneOrMinMaxDimension: $rtfeldman$elm_css$Css$Structure$Compatible,
+			lengthOrNumber: $rtfeldman$elm_css$Css$Structure$Compatible,
+			lengthOrNumberOrAutoOrNoneOrContent: $rtfeldman$elm_css$Css$Structure$Compatible,
+			numericValue: numericValue,
+			textIndent: $rtfeldman$elm_css$Css$Structure$Compatible,
+			unitLabel: unitLabel,
+			units: units,
+			value: _Utils_ap(
+				$elm$core$String$fromFloat(numericValue),
+				unitLabel)
+		};
+	});
 var $rtfeldman$elm_css$Css$Internal$lengthForOverloadedProperty = A3($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$Internal$IncompatibleUnits, '', 0);
+var $rtfeldman$elm_css$Css$justifyContent = function (fn) {
+	return A3(
+		$rtfeldman$elm_css$Css$Internal$getOverloadedProperty,
+		'justifyContent',
+		'justify-content',
+		fn($rtfeldman$elm_css$Css$Internal$lengthForOverloadedProperty));
+};
+var $rtfeldman$elm_css$Css$PercentageUnits = {$: 'PercentageUnits'};
+var $rtfeldman$elm_css$Css$pct = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PercentageUnits, '%');
 var $rtfeldman$elm_css$Css$textAlign = function (fn) {
 	return A3(
 		$rtfeldman$elm_css$Css$Internal$getOverloadedProperty,
@@ -7945,31 +7947,13 @@ var $rtfeldman$elm_css$Css$textAlign = function (fn) {
 };
 var $rtfeldman$elm_css$Css$VhUnits = {$: 'VhUnits'};
 var $rtfeldman$elm_css$Css$vh = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$VhUnits, 'vh');
-var $rtfeldman$elm_css$VirtualDom$Styled$Unstyled = function (a) {
-	return {$: 'Unstyled', a: a};
-};
-var $rtfeldman$elm_css$VirtualDom$Styled$text = function (str) {
-	return $rtfeldman$elm_css$VirtualDom$Styled$Unstyled(
-		$elm$virtual_dom$VirtualDom$text(str));
-};
-var $rtfeldman$elm_css$Html$Styled$text = $rtfeldman$elm_css$VirtualDom$Styled$text;
-var $author$project$Main$viewHackHeight = function () {
-	var hackCss = '\n            html, body { height: 100% }\n            ';
-	return A3(
-		$rtfeldman$elm_css$Html$Styled$node,
-		'style',
-		_List_Nil,
-		_List_fromArray(
-			[
-				$rtfeldman$elm_css$Html$Styled$text(hackCss)
-			]));
-}();
-var $author$project$Main$ToggleBarbellWeight = {$: 'ToggleBarbellWeight'};
-var $rtfeldman$elm_css$Css$backgroundColor = function (c) {
-	return A2($rtfeldman$elm_css$Css$property, 'background-color', c.value);
-};
-var $author$project$Main$barbellWeightIs15KgToString = A2($elm$core$Basics$composeR, $author$project$Main$barbellWeightIs15KgToKgs, $elm$core$String$fromInt);
+var $rtfeldman$elm_css$Css$row = {flexDirection: $rtfeldman$elm_css$Css$Structure$Compatible, flexDirectionOrWrap: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'row'};
+var $rtfeldman$elm_css$Css$columnReverse = _Utils_update(
+	$rtfeldman$elm_css$Css$row,
+	{value: 'column-reverse'});
+var $rtfeldman$elm_css$Css$flexDirection = $rtfeldman$elm_css$Css$prop1('flex-direction');
 var $rtfeldman$elm_css$Css$flexGrow = $rtfeldman$elm_css$Css$prop1('flex-grow');
+var $rtfeldman$elm_css$Css$maxWidth = $rtfeldman$elm_css$Css$prop1('max-width');
 var $rtfeldman$elm_css$Css$UnitlessFloat = {$: 'UnitlessFloat'};
 var $rtfeldman$elm_css$Css$num = function (val) {
 	return {
@@ -7983,6 +7967,13 @@ var $rtfeldman$elm_css$Css$num = function (val) {
 		value: $elm$core$String$fromFloat(val)
 	};
 };
+var $rtfeldman$elm_css$Css$PxUnits = {$: 'PxUnits'};
+var $rtfeldman$elm_css$Css$px = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PxUnits, 'px');
+var $author$project$Main$ToggleBarbellWeight = {$: 'ToggleBarbellWeight'};
+var $rtfeldman$elm_css$Css$backgroundColor = function (c) {
+	return A2($rtfeldman$elm_css$Css$property, 'background-color', c.value);
+};
+var $author$project$Main$barbellWeightIs15KgToString = A2($elm$core$Basics$composeR, $author$project$Main$barbellWeightIs15KgToKgs, $elm$core$String$fromInt);
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -8030,6 +8021,14 @@ var $rtfeldman$elm_css$Css$rgb = F3(
 						[r, g, b])))
 		};
 	});
+var $rtfeldman$elm_css$VirtualDom$Styled$Unstyled = function (a) {
+	return {$: 'Unstyled', a: a};
+};
+var $rtfeldman$elm_css$VirtualDom$Styled$text = function (str) {
+	return $rtfeldman$elm_css$VirtualDom$Styled$Unstyled(
+		$elm$virtual_dom$VirtualDom$text(str));
+};
+var $rtfeldman$elm_css$Html$Styled$text = $rtfeldman$elm_css$VirtualDom$Styled$text;
 var $author$project$Main$viewBarbellToggle = function (barbellWeightIs15Kg) {
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
@@ -8159,15 +8158,30 @@ var $author$project$Main$viewInput = F2(
 				]));
 	});
 var $rtfeldman$elm_css$Css$auto = {alignItemsOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, cursor: $rtfeldman$elm_css$Css$Structure$Compatible, flexBasis: $rtfeldman$elm_css$Css$Structure$Compatible, intOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, justifyContentOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAuto: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrAutoOrCoverOrContain: $rtfeldman$elm_css$Css$Structure$Compatible, lengthOrNumberOrAutoOrNoneOrContent: $rtfeldman$elm_css$Css$Structure$Compatible, overflow: $rtfeldman$elm_css$Css$Structure$Compatible, pointerEvents: $rtfeldman$elm_css$Css$Structure$Compatible, tableLayout: $rtfeldman$elm_css$Css$Structure$Compatible, textRendering: $rtfeldman$elm_css$Css$Structure$Compatible, touchAction: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'auto'};
-var $rtfeldman$elm_css$Css$justifyContent = function (fn) {
-	return A3(
-		$rtfeldman$elm_css$Css$Internal$getOverloadedProperty,
-		'justifyContent',
-		'justify-content',
-		fn($rtfeldman$elm_css$Css$Internal$lengthForOverloadedProperty));
-};
 var $rtfeldman$elm_css$Css$overflow = $rtfeldman$elm_css$Css$prop1('overflow');
 var $rtfeldman$elm_css$Html$Styled$b = $rtfeldman$elm_css$Html$Styled$node('b');
+var $author$project$Main$viewBaseFlare = $rtfeldman$elm_css$Html$Styled$text('🏋️');
+var $author$project$Main$viewBase = function (barbellWeightIs15Kg) {
+	var figureElement = A2(
+		$rtfeldman$elm_css$Html$Styled$b,
+		_List_Nil,
+		$elm$core$List$singleton(
+			$rtfeldman$elm_css$Html$Styled$text(
+				$author$project$Main$barbellWeightIs15KgToString(barbellWeightIs15Kg))));
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$div,
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Html$Styled$Attributes$css(
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Css$displayFlex,
+						$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center)
+					]))
+			]),
+		_List_fromArray(
+			[$author$project$Main$viewBaseFlare, figureElement, $author$project$Main$viewBaseFlare]));
+};
 var $rtfeldman$elm_css$Css$borderBottomStyle = $rtfeldman$elm_css$Css$prop1('border-bottom-style');
 var $rtfeldman$elm_css$Css$color = function (c) {
 	return A2($rtfeldman$elm_css$Css$property, 'color', c.value);
@@ -8221,12 +8235,7 @@ var $author$project$Main$viewPlate = function (plate) {
 var $author$project$Main$viewPlates = F2(
 	function (barbellWeightIs15Kg, plates) {
 		var platesElements = A2($elm$core$List$map, $author$project$Main$viewPlate, plates);
-		var base = A2(
-			$rtfeldman$elm_css$Html$Styled$b,
-			_List_Nil,
-			$elm$core$List$singleton(
-				$rtfeldman$elm_css$Html$Styled$text(
-					$author$project$Main$barbellWeightIs15KgToString(barbellWeightIs15Kg))));
+		var baseElement = $author$project$Main$viewBase(barbellWeightIs15Kg);
 		return A2(
 			$rtfeldman$elm_css$Html$Styled$div,
 			_List_fromArray(
@@ -8241,7 +8250,7 @@ var $author$project$Main$viewPlates = F2(
 							$rtfeldman$elm_css$Css$overflow($rtfeldman$elm_css$Css$auto)
 						]))
 				]),
-			A2($elm$core$List$cons, base, platesElements));
+			A2($elm$core$List$cons, baseElement, platesElements));
 	});
 var $rtfeldman$elm_css$Html$Styled$br = $rtfeldman$elm_css$Html$Styled$node('br');
 var $rtfeldman$elm_css$Css$column = _Utils_update(
@@ -8324,7 +8333,7 @@ var $author$project$Main$viewOutput = F2(
 					A2($author$project$Main$viewOutputContent, barbellWeightIs15Kg, output)
 				]));
 	});
-var $author$project$Main$view = function (model) {
+var $author$project$Main$viewContent = function (model) {
 	return A2(
 		$rtfeldman$elm_css$Html$Styled$div,
 		_List_fromArray(
@@ -8334,6 +8343,67 @@ var $author$project$Main$view = function (model) {
 					[
 						$rtfeldman$elm_css$Css$displayFlex,
 						$rtfeldman$elm_css$Css$flexDirection($rtfeldman$elm_css$Css$columnReverse),
+						$rtfeldman$elm_css$Css$flexGrow(
+						$rtfeldman$elm_css$Css$num(1)),
+						$rtfeldman$elm_css$Css$maxWidth(
+						$rtfeldman$elm_css$Css$px(700))
+					]))
+			]),
+		_List_fromArray(
+			[
+				A2($author$project$Main$viewInput, model.targetWeight, model.barbellWeightIs15Kg),
+				A2($author$project$Main$viewOutput, model.barbellWeightIs15Kg, model.output)
+			]));
+};
+var $elm$virtual_dom$VirtualDom$attribute = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_attribute,
+			_VirtualDom_noOnOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var $rtfeldman$elm_css$VirtualDom$Styled$attribute = F2(
+	function (key, value) {
+		return A3(
+			$rtfeldman$elm_css$VirtualDom$Styled$Attribute,
+			A2($elm$virtual_dom$VirtualDom$attribute, key, value),
+			_List_Nil,
+			'');
+	});
+var $rtfeldman$elm_css$Html$Styled$Attributes$attribute = $rtfeldman$elm_css$VirtualDom$Styled$attribute;
+var $rtfeldman$elm_css$Html$Styled$Attributes$name = $rtfeldman$elm_css$Html$Styled$Attributes$stringProperty('name');
+var $author$project$Main$viewHackDeviceView = A3(
+	$rtfeldman$elm_css$Html$Styled$node,
+	'meta',
+	_List_fromArray(
+		[
+			$rtfeldman$elm_css$Html$Styled$Attributes$name('viewport'),
+			A2($rtfeldman$elm_css$Html$Styled$Attributes$attribute, 'content', 'width=device-width, initial-scale=1')
+		]),
+	_List_Nil);
+var $author$project$Main$viewHackHeight = function () {
+	var hackCss = '\n            html, body { height: 100% }\n            ';
+	return A3(
+		$rtfeldman$elm_css$Html$Styled$node,
+		'style',
+		_List_Nil,
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Html$Styled$text(hackCss)
+			]));
+}();
+var $author$project$Main$viewHacks = _List_fromArray(
+	[$author$project$Main$viewHackHeight, $author$project$Main$viewHackDeviceView]);
+var $author$project$Main$view = function (model) {
+	return A2(
+		$rtfeldman$elm_css$Html$Styled$div,
+		_List_fromArray(
+			[
+				$rtfeldman$elm_css$Html$Styled$Attributes$css(
+				_List_fromArray(
+					[
+						$rtfeldman$elm_css$Css$displayFlex,
+						$rtfeldman$elm_css$Css$justifyContent($rtfeldman$elm_css$Css$center),
 						$rtfeldman$elm_css$Css$fontSize(
 						$rtfeldman$elm_css$Css$vh(7)),
 						$rtfeldman$elm_css$Css$height(
@@ -8341,12 +8411,10 @@ var $author$project$Main$view = function (model) {
 						$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center)
 					]))
 			]),
-		_List_fromArray(
-			[
-				$author$project$Main$viewHackHeight,
-				A2($author$project$Main$viewInput, model.targetWeight, model.barbellWeightIs15Kg),
-				A2($author$project$Main$viewOutput, model.barbellWeightIs15Kg, model.output)
-			]));
+		A2(
+			$elm$core$List$cons,
+			$author$project$Main$viewContent(model),
+			$author$project$Main$viewHacks));
 };
 var $author$project$Main$main = $elm$browser$Browser$sandbox(
 	{
