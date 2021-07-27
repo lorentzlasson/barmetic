@@ -122,16 +122,20 @@ view model =
     Html.Styled.div
         [ Html.Styled.Attributes.css
             [ Css.displayFlex
-            , Css.flexDirection Css.columnReverse
+            , Css.justifyContent Css.center
             , Css.fontSize (Css.vh 7)
             , Css.height (Css.pct 100)
             , Css.textAlign Css.center
             ]
         ]
-        [ viewHackHeight
-        , viewInput model.targetWeight model.barbellWeightIs15Kg
-        , viewOutput model.barbellWeightIs15Kg model.output
-        ]
+        (viewContent model :: viewHacks)
+
+
+viewHacks : List (Html.Styled.Html Msg)
+viewHacks =
+    [ viewHackHeight
+    , viewHackDeviceView
+    ]
 
 
 viewHackHeight : Html.Styled.Html Msg
@@ -145,6 +149,30 @@ viewHackHeight =
     Html.Styled.node "style"
         []
         [ Html.Styled.text hackCss
+        ]
+
+
+viewHackDeviceView : Html.Styled.Html Msg
+viewHackDeviceView =
+    Html.Styled.node "meta"
+        [ Html.Styled.Attributes.name "viewport"
+        , Html.Styled.Attributes.attribute "content" "width=device-width, initial-scale=1"
+        ]
+        []
+
+
+viewContent : Model -> Html.Styled.Html Msg
+viewContent model =
+    Html.Styled.div
+        [ Html.Styled.Attributes.css
+            [ Css.displayFlex
+            , Css.flexDirection Css.columnReverse
+            , Css.flexGrow (Css.num 1)
+            , Css.maxWidth (Css.px 700)
+            ]
+        ]
+        [ viewInput model.targetWeight model.barbellWeightIs15Kg
+        , viewOutput model.barbellWeightIs15Kg model.output
         ]
 
 
