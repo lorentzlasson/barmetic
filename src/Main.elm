@@ -73,7 +73,7 @@ type alias Plate =
 init : Model
 init =
     updateOutput
-        { targetWeight = "35"
+        { targetWeight = "38.5"
         , barbellWeightIs15Kg = False
         , output = Err ""
         }
@@ -338,7 +338,7 @@ getPlateColor plate =
     case plate of
         -- gray
         500 ->
-            Css.rgb 100 100 100
+            Css.rgb 255 255 255
 
         -- gray
         1250 ->
@@ -375,7 +375,11 @@ getPlateColor plate =
 
 getPlateTextColor : Plate -> Css.Color
 getPlateTextColor plate =
-    if plate == 15000 then
+    let
+        isLight =
+            List.member plate [ 500, 15000 ]
+    in
+    if isLight then
         -- dark
         Css.rgb 0 0 0
 
