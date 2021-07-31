@@ -433,13 +433,7 @@ viewSuggestion label =
     gramsToKgs
         >> String.fromFloat
         >> (++) label
-        >> viewWrappedText
-
-
-viewWrappedText : String -> Html.Styled.Html Msg
-viewWrappedText =
-    -- TODO: not wrapping
-    Html.Styled.text
+        >> Html.Styled.text
 
 
 
