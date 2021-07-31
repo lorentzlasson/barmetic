@@ -126,6 +126,7 @@ view model =
             , Css.fontSize (Css.vh 7)
             , Css.height (Css.pct 100)
             , Css.textAlign Css.center
+            , Css.backgroundColor (Css.rgb 38 38 38)
             ]
         ]
         (viewContent model :: viewHacks)
@@ -278,6 +279,7 @@ viewPlates barbellWeightIs15Kg plates =
             , Css.flexDirection Css.columnReverse
             , Css.flexGrow (Css.num 1)
             , Css.overflow Css.auto
+            , Css.color (Css.rgb 255 255 255)
             ]
         ]
         (baseElement :: platesElements)
