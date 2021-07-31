@@ -420,6 +420,7 @@ viewSuggestions ( lower, higher ) =
             ]
         ]
         [ "🙅" |> Html.Styled.text
+        , Html.Styled.br [] []
         , "Suggestions" |> Html.Styled.text
         , Html.Styled.br [] []
         , lower |> viewSuggestion "Lower: "
