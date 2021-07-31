@@ -321,6 +321,9 @@ viewPlate plate =
 
         plateTextColor =
             getPlateTextColor plate
+
+        plateWidth =
+            getPlateWidth plate
     in
     plate
         |> gramsToKgs
@@ -332,6 +335,14 @@ viewPlate plate =
                 [ Css.borderBottomStyle Css.solid
                 , Css.backgroundColor plateColor
                 , Css.color plateTextColor
+                , Css.width plateWidth
+                ]
+            ]
+        |> List.singleton
+        |> Html.Styled.div
+            [ Html.Styled.Attributes.css
+                [ Css.displayFlex
+                , Css.justifyContent Css.center
                 ]
             ]
 
@@ -385,6 +396,19 @@ getPlateTextColor plate =
     else
         -- light
         Css.rgb 255 255 255
+
+
+getPlateWidth : Plate -> Css.Pct
+getPlateWidth plate =
+    let
+        isSmall =
+            List.member plate [ 500, 1250 ]
+    in
+    if isSmall then
+        Css.pct 50
+
+    else
+        Css.pct 100
 
 
 viewSuggestions : ( Grams, Grams ) -> Html.Styled.Html Msg
