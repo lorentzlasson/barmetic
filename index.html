@@ -4839,7 +4839,7 @@ var $author$project$Main$init = $author$project$Main$updateOutput(
 	{
 		barbellWeightIs15Kg: false,
 		output: $elm$core$Result$Err(''),
-		targetWeight: '35'
+		targetWeight: ''
 	});
 var $elm$json$Json$Decode$Failure = F2(
 	function (a, b) {
@@ -7785,11 +7785,17 @@ var $rtfeldman$elm_css$Css$property = F2(
 	function (key, value) {
 		return $rtfeldman$elm_css$Css$Preprocess$AppendProperty(key + (':' + value));
 	});
+var $rtfeldman$elm_css$Css$backgroundColor = function (c) {
+	return A2($rtfeldman$elm_css$Css$property, 'background-color', c.value);
+};
 var $rtfeldman$elm_css$Css$prop1 = F2(
 	function (key, arg) {
 		return A2($rtfeldman$elm_css$Css$property, key, arg.value);
 	});
 var $rtfeldman$elm_css$Css$center = $rtfeldman$elm_css$Css$prop1('center');
+var $rtfeldman$elm_css$Css$color = function (c) {
+	return A2($rtfeldman$elm_css$Css$property, 'color', c.value);
+};
 var $rtfeldman$elm_css$VirtualDom$Styled$Attribute = F3(
 	function (a, b, c) {
 		return {$: 'Attribute', a: a, b: b, c: c};
@@ -7938,6 +7944,28 @@ var $rtfeldman$elm_css$Css$justifyContent = function (fn) {
 };
 var $rtfeldman$elm_css$Css$PercentageUnits = {$: 'PercentageUnits'};
 var $rtfeldman$elm_css$Css$pct = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PercentageUnits, '%');
+var $rtfeldman$elm_css$Css$cssFunction = F2(
+	function (funcName, args) {
+		return funcName + ('(' + (A2($elm$core$String$join, ', ', args) + ')'));
+	});
+var $rtfeldman$elm_css$Css$rgb = F3(
+	function (r, g, b) {
+		return {
+			alpha: 1,
+			blue: b,
+			color: $rtfeldman$elm_css$Css$Structure$Compatible,
+			green: g,
+			red: r,
+			value: A2(
+				$rtfeldman$elm_css$Css$cssFunction,
+				'rgb',
+				A2(
+					$elm$core$List$map,
+					$elm$core$String$fromInt,
+					_List_fromArray(
+						[r, g, b])))
+		};
+	});
 var $rtfeldman$elm_css$Css$textAlign = function (fn) {
 	return A3(
 		$rtfeldman$elm_css$Css$Internal$getOverloadedProperty,
@@ -7970,9 +7998,6 @@ var $rtfeldman$elm_css$Css$num = function (val) {
 var $rtfeldman$elm_css$Css$PxUnits = {$: 'PxUnits'};
 var $rtfeldman$elm_css$Css$px = A2($rtfeldman$elm_css$Css$Internal$lengthConverter, $rtfeldman$elm_css$Css$PxUnits, 'px');
 var $author$project$Main$ToggleBarbellWeight = {$: 'ToggleBarbellWeight'};
-var $rtfeldman$elm_css$Css$backgroundColor = function (c) {
-	return A2($rtfeldman$elm_css$Css$property, 'background-color', c.value);
-};
 var $author$project$Main$barbellWeightIs15KgToString = A2($elm$core$Basics$composeR, $author$project$Main$barbellWeightIs15KgToKgs, $elm$core$String$fromInt);
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
@@ -7999,28 +8024,6 @@ var $rtfeldman$elm_css$Html$Styled$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
-var $rtfeldman$elm_css$Css$cssFunction = F2(
-	function (funcName, args) {
-		return funcName + ('(' + (A2($elm$core$String$join, ', ', args) + ')'));
-	});
-var $rtfeldman$elm_css$Css$rgb = F3(
-	function (r, g, b) {
-		return {
-			alpha: 1,
-			blue: b,
-			color: $rtfeldman$elm_css$Css$Structure$Compatible,
-			green: g,
-			red: r,
-			value: A2(
-				$rtfeldman$elm_css$Css$cssFunction,
-				'rgb',
-				A2(
-					$elm$core$List$map,
-					$elm$core$String$fromInt,
-					_List_fromArray(
-						[r, g, b])))
-		};
-	});
 var $rtfeldman$elm_css$VirtualDom$Styled$Unstyled = function (a) {
 	return {$: 'Unstyled', a: a};
 };
@@ -8041,7 +8044,9 @@ var $author$project$Main$viewBarbellToggle = function (barbellWeightIs15Kg) {
 						$rtfeldman$elm_css$Css$flexGrow(
 						$rtfeldman$elm_css$Css$num(1)),
 						$rtfeldman$elm_css$Css$backgroundColor(
-						A3($rtfeldman$elm_css$Css$rgb, 213, 213, 213))
+						A3($rtfeldman$elm_css$Css$rgb, 213, 213, 213)),
+						$rtfeldman$elm_css$Css$color(
+						A3($rtfeldman$elm_css$Css$rgb, 0, 0, 0))
 					]))
 			]),
 		_List_fromArray(
@@ -8183,23 +8188,20 @@ var $author$project$Main$viewBase = function (barbellWeightIs15Kg) {
 			[$author$project$Main$viewBaseFlare, figureElement, $author$project$Main$viewBaseFlare]));
 };
 var $rtfeldman$elm_css$Css$borderBottomStyle = $rtfeldman$elm_css$Css$prop1('border-bottom-style');
-var $rtfeldman$elm_css$Css$color = function (c) {
-	return A2($rtfeldman$elm_css$Css$property, 'color', c.value);
-};
 var $author$project$Main$getPlateColor = function (plate) {
 	switch (plate) {
 		case 500:
-			return A3($rtfeldman$elm_css$Css$rgb, 100, 100, 100);
+			return A3($rtfeldman$elm_css$Css$rgb, 255, 255, 255);
 		case 1250:
-			return A3($rtfeldman$elm_css$Css$rgb, 100, 100, 100);
+			return A3($rtfeldman$elm_css$Css$rgb, 53, 53, 53);
 		case 2500:
 			return A3($rtfeldman$elm_css$Css$rgb, 100, 100, 100);
 		case 5000:
-			return A3($rtfeldman$elm_css$Css$rgb, 38, 38, 38);
+			return A3($rtfeldman$elm_css$Css$rgb, 0, 0, 0);
 		case 10000:
-			return A3($rtfeldman$elm_css$Css$rgb, 23, 176, 0);
+			return A3($rtfeldman$elm_css$Css$rgb, 51, 130, 2);
 		case 15000:
-			return A3($rtfeldman$elm_css$Css$rgb, 226, 212, 2);
+			return A3($rtfeldman$elm_css$Css$rgb, 220, 182, 0);
 		case 20000:
 			return A3($rtfeldman$elm_css$Css$rgb, 0, 71, 138);
 		case 25000:
@@ -8209,7 +8211,7 @@ var $author$project$Main$getPlateColor = function (plate) {
 	}
 };
 var $author$project$Main$getPlateTextColor = function (plate) {
-	return (plate === 15000) ? A3($rtfeldman$elm_css$Css$rgb, 0, 0, 0) : A3($rtfeldman$elm_css$Css$rgb, 255, 255, 255);
+	return (plate === 500) ? A3($rtfeldman$elm_css$Css$rgb, 0, 0, 0) : A3($rtfeldman$elm_css$Css$rgb, 255, 255, 255);
 };
 var $rtfeldman$elm_css$Css$solid = {borderStyle: $rtfeldman$elm_css$Css$Structure$Compatible, textDecorationStyle: $rtfeldman$elm_css$Css$Structure$Compatible, value: 'solid'};
 var $author$project$Main$viewPlate = function (plate) {
@@ -8408,7 +8410,11 @@ var $author$project$Main$view = function (model) {
 						$rtfeldman$elm_css$Css$vh(7)),
 						$rtfeldman$elm_css$Css$height(
 						$rtfeldman$elm_css$Css$pct(100)),
-						$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center)
+						$rtfeldman$elm_css$Css$textAlign($rtfeldman$elm_css$Css$center),
+						$rtfeldman$elm_css$Css$backgroundColor(
+						A3($rtfeldman$elm_css$Css$rgb, 38, 38, 38)),
+						$rtfeldman$elm_css$Css$color(
+						A3($rtfeldman$elm_css$Css$rgb, 255, 255, 255))
 					]))
 			]),
 		A2(
