@@ -342,7 +342,7 @@ getPlateColor plate =
 
         -- gray
         1250 ->
-            Css.rgb 100 100 100
+            Css.rgb 53 53 53
 
         -- gray
         2500 ->
@@ -350,15 +350,15 @@ getPlateColor plate =
 
         -- black
         5000 ->
-            Css.rgb 38 38 38
+            Css.rgb 0 0 0
 
         -- green
         10000 ->
-            Css.rgb 23 176 0
+            Css.rgb 51 130 2
 
         -- yellow
         15000 ->
-            Css.rgb 226 212 2
+            Css.rgb 220 182 0
 
         -- blue
         20000 ->
@@ -375,11 +375,7 @@ getPlateColor plate =
 
 getPlateTextColor : Plate -> Css.Color
 getPlateTextColor plate =
-    let
-        isLight =
-            List.member plate [ 500, 15000 ]
-    in
-    if isLight then
+    if plate == 500 then
         -- dark
         Css.rgb 0 0 0
 
