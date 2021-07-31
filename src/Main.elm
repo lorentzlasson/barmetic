@@ -73,7 +73,7 @@ type alias Plate =
 init : Model
 init =
     updateOutput
-        { targetWeight = "38.5"
+        { targetWeight = ""
         , barbellWeightIs15Kg = False
         , output = Err ""
         }
